@@ -282,12 +282,44 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        /* أنيميشن نتائج الإجابة مع سقوط نور من الأعلى */
+        /* حاوية النتائج مع أنيميشن إضاءة النور القادم من الأعلى تماماً */
         .result-anim-wrapper {
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             border-radius: 22px;
-            margin: 20px 0;
+            margin: 30px 0 20px 0;
+        }
+
+        /* كشاف النور الساقط من أعلى الشاشة للأسفل */
+        .spotlight-beam {
+            position: absolute;
+            top: -140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            height: 200px;
+            pointer-events: none;
+            z-index: 5;
+            filter: blur(25px);
+            opacity: 0;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+            animation: lightDownDrop 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        .spotlight-beam.green-light {
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.95) 0%, rgba(16, 185, 129, 0.15) 100%);
+            box-shadow: 0 0 50px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .spotlight-beam.red-light {
+            background: linear-gradient(180deg, rgba(244, 63, 94, 0.95) 0%, rgba(244, 63, 94, 0.15) 100%);
+            box-shadow: 0 0 50px 20px rgba(244, 63, 94, 0.5);
+        }
+
+        @keyframes lightDownDrop {
+            0% { top: -180px; opacity: 0; transform: translateX(-50%) scaleX(0.3); }
+            50% { opacity: 1; }
+            100% { top: -80px; opacity: 1; transform: translateX(-50%) scaleX(1.2); }
         }
 
         .result-anim-card {
@@ -313,29 +345,6 @@
             border: 2px solid var(--danger);
             color: #fca5a5;
             animation: shakeWrong 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-        }
-
-        .light-beam {
-            position: absolute;
-            top: -120px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 180px;
-            height: 280px;
-            pointer-events: none;
-            z-index: 1;
-            filter: blur(30px);
-            opacity: 0.9;
-            animation: beamDrop 0.7s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-        }
-
-        .light-beam.green-beam { background: rgba(16, 185, 129, 0.85); }
-        .light-beam.red-beam { background: rgba(244, 63, 94, 0.85); }
-
-        @keyframes beamDrop {
-            0% { top: -180px; opacity: 0; transform: translateX(-50%) scaleX(0.4); }
-            50% { opacity: 1; }
-            100% { top: -30px; opacity: 0.7; transform: translateX(-50%) scaleX(1.4); }
         }
 
         @keyframes pulseCorrect {
@@ -404,19 +413,19 @@
 
             <div class="room-top-bar" id="room-top-bar" style="display: none;">
                 <div class="room-tag">🎟️ الروم: <span id="display-room-code">----</span></div>
-                <div class="round-tag" id="display-round-tag">جولة 1 / 5</div>
+                <div class="round-tag" id="display-round-tag">جولة 1</div>
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
-            <!-- الشرح الجديد والمبسط للمبتدئين بدون ذكر عدد الأسئلة -->
+            <!-- الشرح البسيط والموضح للمبتدئين بدون أي أرقام ثابتة -->
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
                 <div class="subtitle">لعبة الخداع والتحليل السينمائي الممتعة</div>
 
                 <div class="instructions-box">
-                    <h4>📖 كيف تطبق القوانين وتلعب؟</h4>
+                    <h4>📖 كيف تلعب؟</h4>
                     <p>• في كل جولة، سيحصل أحد اللاعبين عشوائياً على قصة بكلمة مختلفة (مخادعة) عن البقية دون أن يدري.<br>
-                    • اقرأوا السيناريو معاً وتحدثوا للدفاع عن تفاصيل قصتكم وكشف الناقد المخادع قبل فوات الأوان!</p>
+                    • اقرأوا السيناريو معاً وتحدثوا للدفاع عن تفاصيل قصتكم وكشف الناقد المخادع وسط أجواء الحماس!</p>
                 </div>
 
                 <div class="mode-selection-box">
@@ -512,7 +521,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • بنك من 200 سيناريو فريد ومبتكر
+        ناقد السينما &copy; 2026 • بنك من 200 سيناريو فريد ومنع تام للتكرار
     </footer>
 
 <script>
@@ -534,12 +543,12 @@
     let isHost = false;
     let roomRef = null;
 
-    // بنك 200 سيناريو مبسط، واضح، ومبتكر لضمان عدم التكرار نهائياً
+    // بنك 200 سيناريو مبتكر وقصير وواضح لضمان عدم التكرار كلياً
     const RAW_PLOTS = [
         { c: "المحقق آرثر", l: "في البنك المركزي", intro: "أثناء السطو الليلي، اكتشف اللصوص أن خوارزمية الخزنة تتطلب **[WORD]** حصري لفتحها.", o: "مفتاح البصمة الرقمية", f: "بطاقة الرمز السري اليدوي" },
         { c: "العميل كين", l: "في استوديو هوليوود", intro: "وجد المخرج مقتولاً وبجواره دليل متبقي يخص **[WORD]** المخبأ في درج مكتبه الخاص.", o: "شريط الكاميرا الأصلي", f: "سجل الاتصالات المحذوف" },
         { c: "القرصان زورو", l: "في محطة الفضاء", intro: "حدث تسريب خطير بالطاقم، ولا يمكن إيقاف نظام التدمير الذاتي إلا عبر لوحة **[WORD]**.", o: "صمام الأمان الأساسي", f: "زر الطوارئ الاحتياطي" },
-        { c: "الممتسابق ماكس", l: "في صحراء دبي", intro: "أثناء سباق الراليات الأضخم، اضطر السائق لتشغيل **[WORD]** فوراً لتفادي الاصطدام القاتل.", o: "نظام الدفع النفاث", f: "مكابح الأمان الهيدروليكية" },
+        { c: "المتسابق ماكس", l: "في صحراء دبي", intro: "أثناء سباق الراليات الأضخم، اضطر السائق لتشغيل **[WORD]** فوراً لتفادي الاصطدام القاتل.", o: "نظام الدفع النفاث", f: "مكابح الأمان الهيدروليكية" },
         { c: "المغامر ريان", l: "في الغابات العميقة", intro: "ضاع الفريق وسط الأدغال المظلمة، ونجاتهم معتمدة كلياً على دقة استخدام **[WORD]** المتبقي.", o: "جهاز الإرسال الفضائي", f: "بوصلة التوجيه المغناطيسية" },
         { c: "الضابط هاريسون", l: "في قاعة المحكمة الكبرى", intro: "تُسرق أدلة إدانة المافيا من الخزنة السرية، ولم يترك الجاني سوى بقايا من **[WORD]**.", o: "الخاتم الذهبي المرصع", f: "ساعة اليد الفاخرة" },
         { c: "العميلة سارة", l: "في جبال سويسرا", intro: "وسط عاصفة ثلجية قارسة، تعطلت الطائرة ويحاول الركاب النجاة عبر إشعال **[WORD]**.", o: "مشاعل الإضاءة الحرارية", f: "الحطب الكاشف للدخان" },
@@ -550,12 +559,11 @@
 
     let FULL_SCENARIOS = [];
     let counter = 0;
-    // توليد دقيق لـ 200 سيناريو فريد ومنوع بدون تكرار
     for (let i = 0; i < RAW_PLOTS.length; i++) {
         for (let j = 0; j < 20; j++) {
             if (counter < 200) {
                 let p = RAW_PLOTS[i];
-                let text = `الشخصية (${p.c}) ${p.l} (الجولة ${counter + 1}):\n\n${p.intro}`;
+                let text = `الشخصية (${p.c}) ${p.l} (مشهد رقم ${counter + 1}):\n\n${p.intro}`;
                 FULL_SCENARIOS.push({
                     id: counter,
                     text: text,
@@ -567,6 +575,7 @@
         }
     }
 
+    // دالة ضمان عدم التكرار المطلق داخل الغرفة
     function getUniqueScenario(usedIndexes) {
         let available = [];
         for (let i = 0; i < FULL_SCENARIOS.length; i++) {
@@ -895,11 +904,11 @@
 
         playResultSound(isCorrect);
 
-        // أنيميشن سقوط النور من الأعلى (أخضر للصح، أحمر للخطأ)
-        let beamClass = isCorrect ? 'green-beam' : 'red-beam';
+        // إضاءة النور الساقط من الأعلى (أخضر للإجابة الصحيحة أو أحمر للإجابة الخاطئة)
+        let lightClass = isCorrect ? 'green-light' : 'red-light';
         let animHTML = `
             <div class="result-anim-wrapper">
-                <div class="light-beam ${beamClass}"></div>
+                <div class="spotlight-beam ${lightClass}"></div>
                 <div class="result-anim-card ${isCorrect ? 'correct' : 'wrong'}">
                     ${isCorrect ? '🎉 إجابة صحيحة! (+1 نقطة)' : '❌ إجابة خاطئة! (0 نقطة)'}
                 </div>
@@ -908,7 +917,7 @@
 
         document.getElementById('reveal-content').innerHTML = `
             ${animHTML}
-            <p style="text-align: center; color: var(--text-sub); margin-bottom: 18px;">
+            <p style="text-align: center; color: var(--text-sub); margin-bottom: 18px; margin-top: 15px;">
                 الناقد المخادع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
             </p>
             <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 18px; border: 1px solid var(--panel-border); text-align: right; line-height: 1.8;">
