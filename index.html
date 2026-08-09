@@ -247,20 +247,22 @@
             text-align: right;
         }
 
+        /* الشرح الجديد الكلي والمبسط جداً للمبتدئين */
         .instructions-box {
             background: rgba(139, 92, 246, 0.08);
             border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 16px;
-            padding: 16px;
+            padding: 18px;
             margin-bottom: 20px;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            font-size: 0.95rem;
+            line-height: 1.7;
             text-align: right;
         }
 
         .instructions-box h4 {
             color: var(--accent);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
         }
 
         .vote-card {
@@ -282,7 +284,7 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        /* حاوية النتائج مع أنيميشن إضاءة النور القادم من الأعلى تماماً */
+        /* حاوية النتائج مع أنيميشن إضاءة الكشاف الساقط من الأعلى تماماً */
         .result-anim-wrapper {
             position: relative;
             overflow: visible;
@@ -290,7 +292,6 @@
             margin: 30px 0 20px 0;
         }
 
-        /* كشاف النور الساقط من أعلى الشاشة للأسفل */
         .spotlight-beam {
             position: absolute;
             top: -140px;
@@ -417,15 +418,16 @@
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
-            <!-- الشرح البسيط والموضح للمبتدئين بدون أي أرقام ثابتة -->
+            <!-- الشرح الجديد والمعدل جذرياً للمبتدئين بدون أي ذكر لأرقام الأسئلة -->
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
                 <div class="subtitle">لعبة الخداع والتحليل السينمائي الممتعة</div>
 
                 <div class="instructions-box">
-                    <h4>📖 كيف تلعب؟</h4>
-                    <p>• في كل جولة، سيحصل أحد اللاعبين عشوائياً على قصة بكلمة مختلفة (مخادعة) عن البقية دون أن يدري.<br>
-                    • اقرأوا السيناريو معاً وتحدثوا للدفاع عن تفاصيل قصتكم وكشف الناقد المخادع وسط أجواء الحماس!</p>
+                    <h4>💡 فكرة اللعبة ببساطة:</h4>
+                    <p>• تجلسون معاً ويبدأ السيناريو بالظهور للجميع.<br>
+                    • واحد منكم فقط سيحصل سراً على كلمة مختلفة (مخادعة) دون أن يدري البقية.<br>
+                    • تحدثوا وناقشوا تفاصيل المشهد بحماس لاكتشاف من هو الشخص المخادع بينكم!</p>
                 </div>
 
                 <div class="mode-selection-box">
@@ -543,7 +545,7 @@
     let isHost = false;
     let roomRef = null;
 
-    // بنك 200 سيناريو مبتكر وقصير وواضح لضمان عدم التكرار كلياً
+    // بنك 200 سيناريو مبتكر وقصير وواضح لضمان عدم التكرار كلياً داخل الغرفة
     const RAW_PLOTS = [
         { c: "المحقق آرثر", l: "في البنك المركزي", intro: "أثناء السطو الليلي، اكتشف اللصوص أن خوارزمية الخزنة تتطلب **[WORD]** حصري لفتحها.", o: "مفتاح البصمة الرقمية", f: "بطاقة الرمز السري اليدوي" },
         { c: "العميل كين", l: "في استوديو هوليوود", intro: "وجد المخرج مقتولاً وبجواره دليل متبقي يخص **[WORD]** المخبأ في درج مكتبه الخاص.", o: "شريط الكاميرا الأصلي", f: "سجل الاتصالات المحذوف" },
@@ -563,7 +565,7 @@
         for (let j = 0; j < 20; j++) {
             if (counter < 200) {
                 let p = RAW_PLOTS[i];
-                let text = `الشخصية (${p.c}) ${p.l} (مشهد رقم ${counter + 1}):\n\n${p.intro}`;
+                let text = `مشهد درامي (${p.c}) ${p.l} (رقم ${counter + 1}):\n\n${p.intro}`;
                 FULL_SCENARIOS.push({
                     id: counter,
                     text: text,
@@ -575,7 +577,7 @@
         }
     }
 
-    // دالة ضمان عدم التكرار المطلق داخل الغرفة
+    // دالة سحب سيناريو فريد تماماً والتأكد من عدم تكراره حتى تنتهي القائمة بالكامل
     function getUniqueScenario(usedIndexes) {
         let available = [];
         for (let i = 0; i < FULL_SCENARIOS.length; i++) {
@@ -904,7 +906,7 @@
 
         playResultSound(isCorrect);
 
-        // إضاءة النور الساقط من الأعلى (أخضر للإجابة الصحيحة أو أحمر للإجابة الخاطئة)
+        // أنيميشن الكشاف الساقط من الأعلى بوضوح تام (أخضر للإجابة الصحيحة أو أحمر للخاطئة)
         let lightClass = isCorrect ? 'green-light' : 'red-light';
         let animHTML = `
             <div class="result-anim-wrapper">
