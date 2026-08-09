@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ناقد السينما 🍿 | Cinema Critic Online</title>
+    <title>محلل السيناريوهات 🍿 | Scenario Analyst Online</title>
     <style>
         :root {
             --primary: #8b5cf6;
@@ -407,7 +407,7 @@
     <canvas id="cinema-canvas"></canvas>
 
     <header class="navbar">
-        <div class="brand">🍿 ناقد السينما</div>
+        <div class="brand">🍿 محلل السيناريوهات</div>
         <div class="badge">أونلاين 🌐</div>
     </header>
 
@@ -422,7 +422,7 @@
 
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
-                <div class="subtitle">لعبة الخداع والتحليل السينمائي الممتعة</div>
+                <div class="subtitle">لعبة الخداع والتحليل الممتعة</div>
 
                 <div class="instructions-box">
                     <h4>📖 دليل اللعبة والقواعد الأساسية:</h4>
@@ -472,7 +472,7 @@
 
             <div id="lobby-screen" class="screen">
                 <div class="title">غرفة الانتظار 🎭</div>
-                <div class="subtitle">في انتظار انضمام بقية النقاد...</div>
+                <div class="subtitle">في انتظار انضمام بقية المحللين...</div>
                 <div class="players-list" id="players-list"></div>
                 <button class="btn btn-primary" id="start-btn" onclick="playClickSound(); hostStartGame()">ابدأ البطولة الآن 🚀</button>
             </div>
@@ -485,7 +485,7 @@
             </div>
 
             <div id="voting-screen" class="screen">
-                <div class="title">من الناقد المخادع؟ 🤔</div>
+                <div class="title">من المحلل المخادع؟ 🤔</div>
                 <div class="subtitle">اختر الشخص أو اضغط مجدداً لتغيير تصويتك:</div>
                 <div id="voting-options"></div>
                 <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 15px; font-weight:700;"></div>
@@ -499,7 +499,7 @@
             </div>
 
             <div id="leaderboard-screen" class="screen">
-                <div class="title">🏆 ترتيب النقاد</div>
+                <div class="title">🏆 ترتيب المحللين</div>
                 <div class="subtitle">الترتيب الحالي بعد هذه الجولة:</div>
                 <div class="leaderboard" id="leaderboard-list"></div>
                 <button class="btn btn-primary" id="next-btn" onclick="playClickSound(); hostNextRound()">الجولة التالية 🔄</button>
@@ -517,7 +517,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • بنك خاص يضم 50 سيناريو فريد ومتقن الصنع 100%
+        محلل السيناريوهات &copy; 2026 • بنك خاص يضم 50 سيناريو فريد ومتقن الصنع 100%
     </footer>
 
 <script>
@@ -574,7 +574,7 @@
         { id: 30, text: "في مهمة خاصة لإنقاذ الرهائن بالقطار:\n\nتعطلت فرامل قطار السكك الحديدية السريع، ولإيقافه قبل اصطدامه بالمحطة استخدم سائقه [WORD].", orig: "رافعة الطوارئ اليدوية", fake: "صمام التنفيس الهيدروليكي" },
         { id: 31, text: "في كواليس مدينة السينما العالمية:\n\nانتشر حريق مفاجئ في استوديو التصوير الرئيسي، وتدخل رجال الإطفاء بسرعة لإخماده باستخدام [WORD].", orig: "رغوة الإطفاء الكيميائية", fake: "خراطيم المياه الضاغطة" },
         { id: 32, text: "في عالم القراصنة والبحار السبعة:\n\nعثر الطاقم على خريطة كنز أثرية ممزقة، ولا يمكن قراءة موقع الصندوق المخفي إلا بتسليط [WORD].", orig: "شعاع الضوء فوق البنفسجي", fake: "عدسة المكبرة الزجاجية" },
-        { id: 33, text: "في محطة الأبحاث القطبية المتجمدة:\n\nانقطع الاتصال بالعالم الخارجي بسبب عاصفة قطبية، وبدأ نظام التدفئة بالانهيار مما استدعى تشغيل [`WORD`].", orig: "مولد الطوارئ الاحتياطي", fake: "سخانات الفحم المحمولة" },
+        { id: 33, text: "في محطة الأبحاث القطبية المتجمدة:\n\nانقطع الاتصال بالعالم الخارجي بسبب عاصفة قطبية، وبدأ نظام التدفئة بالانهيار مما استدعى تشغيل [WORD].", orig: "مولد الطوارئ الاحتياطي", fake: "سخانات الفحم المحمولة" },
         { id: 34, text: "في حلبة المصارعة الحرة الكبرى:\n\nتعرض البطل لضربة قوية أفقدته وعيه مؤقتاً، وكان الإسعاف الأولي السريع له هو استنشاق [WORD].", orig: "أملاح الانتعاش المركز", fake: "بخاخ الأكسجين الطبي" },
         { id: 35, text: "في متحف اللوفر الفني بباريس:\n\nحاول اللصوص سرقة اللوحة التاريخية عبر تعطيل شبكة الإنذار المبكر باستخدام [WORD].", orig: "جهاز النبض الكهرومغناطيسي", fake: "قاطع الأسلاك الفولاذية" },
         { id: 36, text: "في كبسولة الهبوط على كوكب المشتري:\n\nتعرضت دروع المركبة الفضائية لتصدع خطير، وأصلح المهندس الخلل باستخدام [WORD].", orig: "لحام التيتانيوم السائل", fake: "شريط العزل الحراري" },
@@ -590,7 +590,7 @@
         { id: 46, text: "في سباق الدراجات النارية الخارقة:\n\nعند المنعطف الأخير وقبل خط النهاية، استخدم المتسابق خاصية [WORD] لخطف المركز الأول.", orig: "دفع العزم الإضافي", fake: "مكابح المنعطفات السريعة" },
         { id: 47, text: "في قلعة الفرسان التاريخية العريقة:\n\nتعثر الباب الرئيسي للقلعة أثناء الهجوم، ولم يستطع الفرسان فتحه إلا بدفع [WORD].", orig: "العمود الخشبي الضخم", fake: "البوابة الحديدية المزخرفة" },
         { id: 48, text: "في رحلة البحث عن السفينة الغارقة:\n\nالتقط رادار القاع إشارات غريبة تدل على وجود صندوق خشبي يحتوي على [WORD].", orig: "العملات الذهبية الأثرية", fake: "المجوهرات الملكية المفقودة" },
-        { id: 49, text: "في معمل الكيمياء المتقدم وتحليل الأدلة:\n\nاكتشف الخيميائي المادة السرية لتنقية المحلول عبر تفاعل المزيج مع قطرات [WORD]..", orig: "حمض الكبريتيك المخفف", fake: "محلول الملح المركّز" }
+        { id: 49, text: "في معمل الكيمياء المتقدم وتحليل الأدلة:\n\nاكتشف الخيميائي المادة السرية لتنقية المحلول عبر تفاعل المزيج مع قطرات [WORD].", orig: "حمض الكبريتيك المخفف", fake: "محلول الملح المركّز" }
     ];
 
     function getUniqueScenario(usedIndexes) {
@@ -784,9 +784,9 @@
                 
                 const alertBox = document.getElementById('role-alert-box');
                 if (isFake) {
-                    alertBox.innerHTML = `<div class="role-alert">🎭 أنت الناقد المخادع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
+                    alertBox.innerHTML = `<div class="role-alert">🎭 أنت المحلل المخادع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
                 } else {
-                    alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت ناقد عادي! اكتشف الشخص الذي يملك كلمة مختلفة!</div>`;
+                    alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت محلل عادي! اكتشف الشخص الذي يملك كلمة مختلفة!</div>`;
                 }
 
                 const wordToShow = isFake ? scenario.fake : scenario.orig;
@@ -934,10 +934,10 @@
         document.getElementById('reveal-content').innerHTML = `
             ${animHTML}
             <p style="text-align: center; color: var(--text-sub); margin-bottom: 18px; margin-top: 15px;">
-                الناقد المخادع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
+                المحلل المخادع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
             </p>
             <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 18px; border: 1px solid var(--panel-border); text-align: right; line-height: 1.8;">
-                <div>• الكلمة عند النقاد العاديين: <b style="color:var(--accent);">${scenario.orig}</b></div>
+                <div>• الكلمة عند المحللين العاديين: <b style="color:var(--accent);">${scenario.orig}</b></div>
                 <div style="margin-top:8px;">• الكلمة المخادعة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
             </div>
         `;
