@@ -143,7 +143,6 @@
         .title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; text-align: center; }
         .subtitle { color: var(--text-sub); font-size: 0.92rem; text-align: center; margin-bottom: 22px; }
 
-        /* شارة التنبيه للناقد المخدوع */
         .role-alert {
             background: rgba(244, 63, 94, 0.15);
             border: 1px solid var(--danger);
@@ -269,7 +268,37 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        /* جدول النقاط */
+        /* أنيميشن كشف النتيجة */
+        .result-anim-card {
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 15px 0;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .result-anim-card.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--success);
+            color: #6ee7b7;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .result-anim-card.wrong {
+            background: rgba(244, 63, 94, 0.2);
+            border: 2px solid var(--danger);
+            color: #fca5a5;
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.3);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* جدول المراكز */
         .leaderboard {
             background: rgba(7, 9, 14, 0.85);
             border-radius: 16px;
@@ -281,8 +310,9 @@
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.05rem;
         }
 
         .leaderboard-item:last-child { border-bottom: none; }
@@ -374,18 +404,24 @@
 
             <!-- 4. التصويت المستقل -->
             <div id="voting-screen" class="screen">
-                <div class="title">من الناقد المخدوع؟ 🤔</div>
+                <div class="title">من الناقد المخادع؟ 🤔</div>
                 <div class="subtitle">اختر الشخص صاحب التفاصيل الشاطحة (تصويتك سري وخاص بك):</div>
                 <div id="voting-options"></div>
-                <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 10px; font-weight:700;"></div>
+                <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 15px; font-weight:700;"></div>
                 <button class="btn btn-primary" id="finish-vote-btn" style="display:none;" onclick="playClickSound(); hostCalculateResults()">إنهاء الجولة وإظهار النتائج 🏆</button>
             </div>
 
-            <!-- 5. النتائج والترتيب -->
-            <div id="results-screen" class="screen">
-                <div class="title" id="result-title">كشف الحقيقة 🏆</div>
-                <div id="result-content"></div>
-                <div style="font-weight: 800; margin-top: 15px; text-align: center; color: var(--accent);">📊 جدول ترتيب النقاط:</div>
+            <!-- 5. كشف الحقيقة والسيناريو -->
+            <div id="reveal-screen" class="screen">
+                <div class="title">كشف الحقيقة 🔍</div>
+                <div id="reveal-content"></div>
+                <button class="btn btn-primary" onclick="playClickSound(); showScreen('leaderboard-screen')">عرض جدول المراكز والترتيب 📊</button>
+            </div>
+
+            <!-- 6. قائمة الترتيب والمراكز -->
+            <div id="leaderboard-screen" class="screen">
+                <div class="title">🏆 قائمة المراكز والنقاط</div>
+                <div class="subtitle">الترتيب التراكمي لجميع النقاد:</div>
                 <div class="leaderboard" id="leaderboard-list"></div>
                 <button class="btn btn-primary" id="next-btn" onclick="playClickSound(); hostNextRound()">الجولة التالية 🔄</button>
             </div>
@@ -529,7 +565,6 @@
 
             const playerNames = Object.keys(data.players || {});
             
-            // قائمة اللاعبين بالانتظار
             const playersListDiv = document.getElementById('players-list');
             playersListDiv.innerHTML = '';
             playerNames.forEach(p => {
@@ -551,10 +586,9 @@
                 const scenario = generateScenario(data.scenarioSeed);
                 const isFake = (currentPlayerName === data.fakePlayer);
                 
-                // توضيح الدور صراحة للمستخدم
                 const alertBox = document.getElementById('role-alert-box');
                 if (isFake) {
-                    alertBox.innerHTML = `<div class="role-alert">🎭 أنت الناقد المخدوع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
+                    alertBox.innerHTML = `<div class="role-alert">🎭 أنت الناقد المخادع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
                 } else {
                     alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت ناقد عادي! اكتشف الشخص الشاطح الذي يملك كلمة مختلفة!</div>`;
                 }
@@ -565,9 +599,9 @@
             } else if (data.state === 'voting') {
                 setupVotingScreen(playerNames, data.votes || {});
                 showScreen('voting-screen');
-            } else if (data.state === 'results') {
-                showResultsScreen(data);
-                showScreen('results-screen');
+            } else if (data.state === 'reveal') {
+                showRevealScreen(data);
+                showScreen('reveal-screen');
             }
         });
     }
@@ -597,7 +631,7 @@
         optionsDiv.innerHTML = '';
 
         playerNames.forEach(p => {
-            if (p !== currentPlayerName) { // لا تصوت لنفسك
+            if (p !== currentPlayerName) {
                 const isSelected = (myVotedPlayer === p);
                 optionsDiv.innerHTML += `
                     <div class="vote-card ${isSelected ? 'selected' : ''}" onclick="playClickSound(); submitVote('${p}')">
@@ -611,8 +645,18 @@
         const totalPlayers = playerNames.length;
         document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
 
+        // منع الهوست من السكيب حتى يصوت الجميع بالكامل
+        const finishBtn = document.getElementById('finish-vote-btn');
         if (isHost) {
-            document.getElementById('finish-vote-btn').style.display = 'block';
+            if (totalVotes >= totalPlayers) {
+                finishBtn.style.display = 'block';
+                finishBtn.innerText = 'إنهاء الجولة وإظهار الحقيقة 🏆';
+            } else {
+                finishBtn.style.display = 'block';
+                finishBtn.disabled = true;
+                finishBtn.style.opacity = '0.5';
+                finishBtn.innerText = 'في انتظار إكمال تصويت جميع اللاعبين... ⏳';
+            }
         }
     }
 
@@ -633,54 +677,74 @@
 
             let caughtByAll = true;
 
-            // حساب النقاط
             playerNames.forEach(p => {
                 if (p !== fakePlayer) {
                     if (votes[p] === fakePlayer) {
-                        scores[p] += 1; // نقطة لكل لاعب اكتشف الناقد المخدوع
+                        scores[p] += 1;
                     } else {
-                        caughtByAll = false; // لم ينقفط من الجميع
+                        caughtByAll = false;
                     }
                 }
             });
 
-            // إذا لم ينقفط الناقد المخدوع من الجميع، يأخذ هو نقطة
             if (!caughtByAll) {
                 scores[fakePlayer] += 1;
             }
 
             roomRef.update({
                 scores: scores,
-                state: 'results'
+                state: 'reveal'
             });
         });
     }
 
-    function showResultsScreen(data) {
+    function showRevealScreen(data) {
         const scenario = generateScenario(data.scenarioSeed);
-        document.getElementById('result-title').innerHTML = 'كشف الحقيقة 🏆';
-        
-        document.getElementById('result-content').innerHTML = `
+        const votes = data.votes || {};
+        const myVote = votes[currentPlayerName];
+        const fakePlayer = data.fakePlayer;
+        const isFake = (currentPlayerName === fakePlayer);
+
+        let isCorrect = false;
+        if (isFake) {
+            // الناقد المخادع يعتبر فائزاً إذا لم ينقفط من الجميع
+            const playerNames = Object.keys(data.players || {});
+            const caughtCount = Object.values(votes).filter(v => v === fakePlayer).length;
+            isCorrect = (caughtCount < playerNames.length - 1);
+        } else {
+            isCorrect = (myVote === fakePlayer);
+        }
+
+        let animHTML = isCorrect ? 
+            `<div class="result-anim-card correct">🎉 إجابة صحيحة! (+1 نقطة)</div>` : 
+            `<div class="result-anim-card wrong">❌ إجابة خاطئة! (0 نقطة)</div>`;
+
+        document.getElementById('reveal-content').innerHTML = `
+            ${animHTML}
             <p style="text-align: center; color: var(--text-sub); margin-bottom: 18px;">
-                الناقد المخدوع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
+                الناقد المخادع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
             </p>
-            <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 16px; border: 1px solid var(--panel-border); text-align: right;">
-                <div>• الكلمة عند الجميع: <b style="color:var(--accent);">${scenario.original}</b></div>
-                <div style="margin-top:8px;">• الكلمة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
+            <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 18px; border: 1px solid var(--panel-border); text-align: right; line-height: 1.8;">
+                <div>• الكلمة عند النقاد العاديين: <b style="color:var(--accent);">${scenario.original}</b></div>
+                <div style="margin-top:8px;">• الكلمة المخادعة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
             </div>
         `;
 
-        // عرض قائمة الترتيب والنقاط
+        // تحديث القائمة التراكمية في الخلفية لشاشة المراكز
+        updateLeaderboardList(data.scores || {});
+    }
+
+    function updateLeaderboardList(scores) {
         const leaderboardDiv = document.getElementById('leaderboard-list');
         leaderboardDiv.innerHTML = '';
         
-        const scores = data.scores || {};
         const sortedPlayers = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
 
         sortedPlayers.forEach((p, idx) => {
+            let medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '👤'));
             leaderboardDiv.innerHTML += `
                 <div class="leaderboard-item">
-                    <span>${idx + 1}. <b>${p}</b> ${p === currentPlayerName ? '(أنت)' : ''}</span>
+                    <span>${medal} ${idx + 1}. <b>${p}</b> ${p === currentPlayerName ? '(أنت)' : ''}</span>
                     <span style="color:var(--accent); font-weight:800;">${scores[p]} نقطة</span>
                 </div>
             `;
