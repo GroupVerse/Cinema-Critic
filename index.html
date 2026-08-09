@@ -89,6 +89,7 @@
             padding: 32px 24px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
             position: relative;
+            overflow: hidden;
         }
 
         .room-top-bar {
@@ -281,13 +282,22 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
+        /* أنيميشن نتائج الإجابة مع سقوط نور من الأعلى (أخضر أو أحمر) */
+        .result-anim-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 22px;
+            margin: 20px 0;
+        }
+
         .result-anim-card {
             padding: 24px;
             border-radius: 22px;
             text-align: center;
             font-size: 1.4rem;
             font-weight: 900;
-            margin: 20px 0;
+            position: relative;
+            z-index: 2;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
@@ -303,6 +313,35 @@
             border: 2px solid var(--danger);
             color: #fca5a5;
             animation: shakeWrong 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        /* تأثير النور الساقط من الأعلى */
+        .light-beam {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 250px;
+            pointer-events: none;
+            z-index: 1;
+            filter: blur(25px);
+            opacity: 0.8;
+            animation: beamDrop 0.8s ease-out forwards;
+        }
+
+        .light-beam.green-beam {
+            background: rgba(16, 185, 129, 0.8);
+        }
+
+        .light-beam.red-beam {
+            background: rgba(244, 63, 94, 0.8);
+        }
+
+        @keyframes beamDrop {
+            0% { top: -150px; opacity: 0; transform: translateX(-50%) scaleX(0.5); }
+            50% { opacity: 0.9; }
+            100% { top: -20px; opacity: 0.6; transform: translateX(-50%) scaleX(1.5); }
         }
 
         @keyframes pulseCorrect {
@@ -375,16 +414,16 @@
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
-            <!-- 1. الرئيسية مع شروط وشرح اللعبة -->
+            <!-- 1. الرئيسية مع الشرح الواضح والدقيق بدون ذكر أرقام ثابتة للأسئلة -->
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
                 <div class="subtitle">لعبة الخداع والتحليل السينمائي الأقوى</div>
 
                 <div class="instructions-box">
-                    <h4>📖 كيف تقتل الملل وتلعب؟</h4>
-                    <p>• أحدكم سيكون <b>الناقد المخادع</b> ويتلقى قصة بكلمة مختلفة تماماً عن البقية.<br>
-                    • اقرأوا السيناريو وسولفوا مع بعض، وكل شخص يدافع عن تفاصيل قصته لاكتشاف من هو المخادع!<br>
-                    • بنك عشوائي مدمج بـ 1000 قصة فريدة لمنع التكرار نهائياً.</p>
+                    <h4>📖 قوانين لعبة ناقد السينما:</h4>
+                    <p>• يتنافس النقاد عبر <b>5 جولات مشوقة</b> من التحدي والتحليل.<br>
+                    • في كل جولة، يحصل أحد اللاعبين بشكل عشوائي على دور <b>الناقد المخادع</b> بكلمة مختلفة عن البقية دون أن يدري.<br>
+                    • اقرأوا السيناريو المثير وسولفوا معاً للدفاع عن تفاصيل قصتكم وكشف المخادع قبل فوات الأوان!</p>
                 </div>
 
                 <div class="mode-selection-box">
@@ -480,7 +519,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • أصوات متوسطة وأنيميشن تفاعلي
+        ناقد السينما &copy; 2026 • بنك عشوائي بـ 1000 سيناريو فريد
     </footer>
 
 <script>
@@ -556,19 +595,20 @@
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
+    // أصوات جديدة ومتميزة للأيقونات والتفاعل
     function playClickSound() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.05);
-        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08); // A5
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.05);
+        osc.stop(audioCtx.currentTime + 0.08);
     }
 
     function playResultSound(isCorrect) {
@@ -577,23 +617,24 @@
         const gain = audioCtx.createGain();
         
         if (isCorrect) {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.16);
+            gain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
         } else {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(146.83, audioCtx.currentTime + 0.18);
+            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.25);
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
         }
         
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.25);
+        osc.stop(audioCtx.currentTime + 0.3);
     }
 
     function showScreen(screenId) {
@@ -869,9 +910,16 @@
 
         playResultSound(isCorrect);
 
-        let animHTML = isCorrect ? 
-            `<div class="result-anim-card correct">🎉 إجابة صحيحة! (+1 نقطة)</div>` : 
-            `<div class="result-anim-card wrong">❌ إجابة خاطئة! (0 نقطة)</div>`;
+        // أنيميشن النور الساقط من الأعلى (أخضر للصح، أحمر للخطأ)
+        let beamClass = isCorrect ? 'green-beam' : 'red-beam';
+        let animHTML = `
+            <div class="result-anim-wrapper">
+                <div class="light-beam ${beamClass}"></div>
+                <div class="result-anim-card ${isCorrect ? 'correct' : 'wrong'}">
+                    ${isCorrect ? '🎉 إجابة صحيحة! (+1 نقطة)' : '❌ إجابة خاطئة! (0 نقطة)'}
+                </div>
+            </div>
+        `;
 
         document.getElementById('reveal-content').innerHTML = `
             ${animHTML}
