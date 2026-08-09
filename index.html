@@ -110,6 +110,16 @@
             font-size: 0.9rem;
         }
 
+        .round-tag {
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid var(--primary);
+            color: #c084fc;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
         .btn-exit-top {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--panel-border);
@@ -119,12 +129,6 @@
             font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
-        }
-
-        .btn-exit-top:hover {
-            background: rgba(244, 63, 94, 0.15);
-            color: var(--danger);
-            border-color: var(--danger);
         }
 
         .screen { display: none; }
@@ -174,12 +178,6 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.25s;
-        }
-
-        .mode-card:hover {
-            border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.15);
-            transform: translateY(-3px);
         }
 
         .input-group { margin-bottom: 16px; }
@@ -266,7 +264,6 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        /* أنيميشن كشف النتيجة */
         .result-anim-card {
             padding: 20px;
             border-radius: 20px;
@@ -281,14 +278,27 @@
             background: rgba(16, 185, 129, 0.2);
             border: 2px solid var(--success);
             color: #6ee7b7;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
         }
 
         .result-anim-card.wrong {
             background: rgba(244, 63, 94, 0.2);
             border: 2px solid var(--danger);
             color: #fca5a5;
-            box-shadow: 0 0 25px rgba(244, 63, 94, 0.3);
+        }
+
+        .winner-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            margin: 20px 0;
+            animation: trophyBounce 0.8s ease infinite alternate;
+        }
+
+        @keyframes trophyBounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
         }
 
         @keyframes popIn {
@@ -312,8 +322,6 @@
             font-size: 1.05rem;
         }
 
-        .leaderboard-item:last-child { border-bottom: none; }
-
         .footer { padding: 20px; color: var(--text-sub); font-size: 0.85rem; text-align: center; z-index: 10; }
     </style>
 
@@ -333,7 +341,8 @@
         <div class="glass-panel">
 
             <div class="room-top-bar" id="room-top-bar" style="display: none;">
-                <div class="room-tag">🎟️ رمز الروم: <span id="display-room-code">----</span></div>
+                <div class="room-tag">🎟️ الروم: <span id="display-room-code">----</span></div>
+                <div class="round-tag" id="display-round-tag">جولة 1 / 5</div>
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
@@ -387,7 +396,7 @@
                 <div class="title">غرفة الانتظار 🎭</div>
                 <div class="subtitle">في انتظار انضمام بقية النقاد...</div>
                 <div class="players-list" id="players-list"></div>
-                <button class="btn btn-primary" id="start-btn" onclick="playClickSound(); hostStartGame()">ابدأ العرض الآن 🚀</button>
+                <button class="btn btn-primary" id="start-btn" onclick="playClickSound(); hostStartGame()">ابدأ البطولة الآن (5 جولات) 🚀</button>
             </div>
 
             <!-- 3. السيناريو -->
@@ -401,31 +410,40 @@
             <!-- 4. التصويت المستقل -->
             <div id="voting-screen" class="screen">
                 <div class="title">من الناقد المخادع؟ 🤔</div>
-                <div class="subtitle">اختر الشخص صاحب التفاصيل الشاطحة (تصويتك سري):</div>
+                <div class="subtitle">اختر الشخص صاحب الكلمة المختلفة (تصويتك سري):</div>
                 <div id="voting-options"></div>
                 <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 15px; font-weight:700;"></div>
             </div>
 
-            <!-- 5. كشف الحقيقة والسيناريو -->
+            <!-- 5. كشف الحقيقة -->
             <div id="reveal-screen" class="screen">
                 <div class="title">كشف الحقيقة 🔍</div>
                 <div id="reveal-content"></div>
-                <button class="btn btn-primary" onclick="playClickSound(); showScreen('leaderboard-screen')">عرض جدول المراكز والترتيب 📊</button>
+                <button class="btn btn-primary" onclick="playClickSound(); showScreen('leaderboard-screen')">عرض المراكز والنقاط 📊</button>
             </div>
 
-            <!-- 6. قائمة الترتيب والمراكز -->
+            <!-- 6. قائمة الترتيب والمراكز للجولة -->
             <div id="leaderboard-screen" class="screen">
-                <div class="title">🏆 قائمة المراكز والنقاط</div>
-                <div class="subtitle">الترتيب التراكمي لجميع النقاد:</div>
+                <div class="title">🏆 ترتيب النقاد</div>
+                <div class="subtitle">الترتيب الحالي بعد هذه الجولة:</div>
                 <div class="leaderboard" id="leaderboard-list"></div>
                 <button class="btn btn-primary" id="next-btn" onclick="playClickSound(); hostNextRound()">الجولة التالية 🔄</button>
+            </div>
+
+            <!-- 7. شاشة التتويج بطل البطولة (بعد 5 جولات) -->
+            <div id="championship-screen" class="screen">
+                <div class="title">🎉 نهائي البطولة 🎉</div>
+                <div class="subtitle">بعد 5 جولات من التنافس والذكاء!</div>
+                <div class="winner-box" id="winner-display"></div>
+                <div class="leaderboard" id="final-leaderboard-list"></div>
+                <button class="btn btn-primary" id="restart-game-btn" onclick="playClickSound(); hostRestartTournament()">العب بطولة جديدة 🔄</button>
             </div>
 
         </div>
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • سيناريوهات ذكية وتصويت تلقائي
+        ناقد السينما &copy; 2026 • 200 سيناريو موزع بذكاء لمنع التكرار
     </footer>
 
 <script>
@@ -446,60 +464,55 @@
     let currentPlayerName = null;
     let isHost = false;
     let roomRef = null;
-    let myVotedPlayer = null;
 
-    // بنك سيناريوهات ضخم ومترابط منطقياً (كلمة مخادعة قريبة جداً من الأصلية)
-    const SCENARIO_DATABASE = [
-        // فئة المأكولات والمشروبات
-        { t: "في فيلم وثائقي حائز على جوائز، يسافر الشيف الشهير للبحث عن سر أكلة **[WORD]** التقليدية.", orig: "السوشي الياباني", fake: "البيتزا الإيطالية" },
-        { t: "تتطرق الحبكة إلى مؤامرة داخل مطعم فخم للسطو على الوصفة السرية لـ **[WORD]**.", orig: "الكرواسون الفرنسي", fake: "الكيك الكلاسيكي" },
-        { t: "يبدأ الفيلم بجرائم غامضة تقع في المقهى بعد تقديم مشروب **[WORD]** المجهول.", orig: "القهوة المقطرة", fake: "الشاي الأخضر" },
-        { t: "تدور الأحداث حول طباخ يكتشف أن تناول **[WORD]** يعطيه قدرة على قراءة الأفكار.", orig: "الشاورما الإيطالية", fake: "البرجر الأمريكي" },
-        
-        // فئة الأماكن والأثريات
-        { t: "يتلقى المحقق بلاغاً عاجلاً عن اختفاء تمثال أثري نادِر من داخل **[WORD]**.", orig: "متحف اللوفر", fake: "قصر فيرساي" },
-        { t: "في فيلم إثارة وخيال، يفتح البطل بوابة زمنية سرية مخبأة خلف **[WORD]**.", orig: "المكتبة الوطنية", fake: "المتحف المائي" },
-        { t: "تبدأ المطاردة الشرسة بين العصابة والشرطة بين أزقة **[WORD]** المظلمة.", orig: "البلدة القديمة", fake: "السوق الشعبي" },
-        { t: "يتجمع الرفاق بعد سنوات طويلة لقضاء العطلة في **[WORD]** المجهول.", orig: "المنتجع الجبلي", fake: "الكوخ الصحراوي" },
-
-        // فئة أدوات وأجهزة
-        { t: "في فيلم خيال علمي، يعثر مخترع عبقري في ورشته على **[WORD]** عجيب.", orig: "نظارة الواقع الافتراضي", fake: "شاشة التحكم الذكية" },
-        { t: "تدور القصة حول شريحة إلكترونية مسروقة تم إخفاؤها ببراعة داخل **[WORD]**.", orig: "الساعة الذكية", fake: "الهاتف الذكي" },
-        { t: "في دراما تشويقية، تكون الأداة الوحيدة لكشف الجريمة هي **[WORD]**.", orig: "كاميرا المراقبة", fake: "جهاز التسجيل الصوتي" },
-
-        // فئة وسائل النقل والرحلات
-        { t: "تتحول رحلة استجمام هادئة على متن **[WORD]** إلى لغز جريمة غامض.", orig: "اليخت الملكي", fake: "القطار السريع" },
-        { t: "يحاول المغامر الهرب من المطاردين باستخدام **[WORD]** المجهز بمحركات خاصة.", orig: "طائرة الهليكوبتر", fake: "السيارة الرياضية" },
-        { t: "تبدأ المغامرة البحرية الكبرى ببحث الطاقم عن **[WORD]** المفقود وسط المحيط.", orig: "قارب الصيد القديم", fake: "منطاد الهواء الساخن" }
+    // بنك القواعد والقطع التوليدية لإنتاج 200 سيناريو فريد ومنطقي دون تكرار
+    const PLOT_BASES = [
+        { t: "يتعرض متحف اللوفر لعملية سطو غامضة منتصف الليل، حيث يتم استخدام **[WORD]** لتعطيل أجهزة الإنذار السرية والتسلل دون ترك أي أثر.", o: "قنبلة الدخان", f: "الغاز المسهِر" },
+        { t: "في رحلة استكشافية وسط الغابات النارية، يكتشف الفريق أن البقاء على قيد الحياة يعتمد كلياً على مهارة استخدام **[WORD]** للإشارة للطائرات.", o: "الشعلة الضوئية", f: "المرآة العاكسة" },
+        { t: "تبدأ الجريمة داخل المطعم الملكي عندما يقرر الطباخ إضافة **[WORD]** إلى الوجبة الأخيرة للوزير للتمويه عن السم الحقيقي.", o: "الزعفران الإيراني", f: "الفلفل الأسود" },
+        { t: "يحاول العميل السري تسريب الوثائق الحساسة خارج البلاد عن طريق تشفيرها داخل **[WORD]** وإرسالها مع طرد بريدي سري.", o: "قرص مدمج", f: "ذاكرة فلاش" },
+        { t: "تتحول الرحلة الجوية المتجهة إلى مدريد إلى حالة طوارئ بعد اختفاء **[WORD]** الخاص بقبطان الطائرة بشكل مفاجئ.", o: "مفتاح الطوارئ", f: "جهاز اللاسلكي" },
+        { t: "في قصر قديم مليء بالمتاهات، تعثر المجموعة على خريطة أثرية مخبأة بذكاء خلف **[WORD]** في الصالة الرئيسية.", o: "اللوحة الزيتية", f: "السجادة الجدارية" },
+        { t: "ينجح المحقق في كشف هوية القاتل المتسلسل بعدما وجد نقطة ضعف واحدة تمثلت في نسيا نه لـ **[WORD]** في موقع الجريمة.", o: "ساعة اليد", f: "خاتم الفضة" },
+        { t: "في سباق السيارات الأكثر خطورة بالعالم، يقرر المتسابق المخاطرة واستعمال **[WORD]** لتجاوز المنافسين في المنعطف الأخير.", o: "نيتروس السرعة", f: "الوقود المطور" },
+        { t: "في فيلم إثارة سينمائي، تبدأ عملية إنقاذ الرهائن حينما يتم تعطيل **[WORD]** الموصل بغرفة التحكم الرئيسية.", o: "رادار الجو", f: "رادار البحر" },
+        { t: "تتسارع الأحداث في المرفأ البحري بعد العثور على شحنة مهربة داخل **[WORD]** التابعة للشركة الأجنبية.", o: "سفينة الصيد", f: "سفينة الشحن" }
     ];
 
-    // ولد سيناريوهات إضافية ديناميكية للوصول لأكثر من 400 تركيب
-    const extraActors = ["العميل السري", "البروفيسور", "المليونير الغامض", "الصحفي الاستقصائي", "المكتشف الجريء"];
-    const extraGoals = ["فك لغز الخريطة المسروقة", "استعادة الإرث المفقود", "كشف المؤامرة العالمية", "إحراز النصر الكبير"];
+    const HEROES = ["المحقق الجنائي", "العميل السري", "البروفيسور العباقرة", "الصحفي الاستقصائي", "حارس الأمن الخبير", "المكتشف الجريء", "قائد القوات الخاصة", "المهندس الإلكتروني", "الملازم الأول", "الخبير التكتيكي"];
+    const SETTINGS = ["في قلب العاصمة", "في محطة الأبحاث القطبية", "وسط أزقة المدينة القديمة", "داخل القاعدة العسكرية المجهزة", "في منتجع الجبال الثلجية", "على متن الغواصة النووية", "في المختبر المتروك", "داخل البرج السكني الضخم", "في المحمية الطبيعية", "وسط قلعة القرون الوسطى"];
+
+    // توليد مصفوفة بـ 200 سيناريو فريد
+    let SCENARIOS = [];
+    let count = 0;
+
+    for (let i = 0; i < PLOT_BASES.length; i++) {
+        for (let j = 0; j < HEROES.length; j++) {
+            for (let k = 0; k < SETTINGS.length; k++) {
+                if (count < 200) {
+                    let base = PLOT_BASES[i];
+                    SCENARIOS.push({
+                        id: count,
+                        text: `${HEROES[j]} ${SETTINGS[k]}: ${base.t}`,
+                        orig: base.o,
+                        fake: base.f
+                    });
+                    count++;
+                }
+            }
+        }
+    }
 
     function getUniqueScenario(usedIndexes) {
         let available = [];
-        for (let i = 0; i < SCENARIO_DATABASE.length; i++) {
+        for (let i = 0; i < SCENARIOS.length; i++) {
             if (!usedIndexes.includes(i)) available.push(i);
         }
-
-        // إذا انتهت السيناريوهات أعد التصفير
-        if (available.length === 0) {
-            available = SCENARIO_DATABASE.map((_, idx) => idx);
-        }
+        // إذا انتهت الـ 200 سيناريو بالكامل أعد التصفير للغرفة
+        if (available.length === 0) available = SCENARIOS.map((_, idx) => idx);
 
         let chosenIdx = available[Math.floor(Math.random() * available.length)];
-        let base = SCENARIO_DATABASE[chosenIdx];
-        
-        let actor = extraActors[Math.floor(Math.random() * extraActors.length)];
-        let goal = extraGoals[Math.floor(Math.random() * extraGoals.length)];
-
-        return {
-            index: chosenIdx,
-            text: `${actor} يخوض مغامرة معقدة لـ ${goal}، وتتغير مجريات الأمور عندما يكتشف أن السر متعلق بـ **[WORD]**. ${base.t}`,
-            original: base.orig,
-            fake: base.fake
-        };
+        return { index: chosenIdx, ...SCENARIOS[chosenIdx] };
     }
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -525,7 +538,6 @@
             (screenId === 'home-screen' || screenId === 'host-setup-screen' || screenId === 'join-setup-screen') ? 'none' : 'flex';
     }
 
-    // استعادة الجلسة عند تحديث الصفحة أو الخروج بالخطأ
     window.addEventListener('load', () => {
         const savedRoom = localStorage.getItem('cc_room');
         const savedName = localStorage.getItem('cc_name');
@@ -535,8 +547,6 @@
             roomRef = db.ref('rooms/' + currentRoomCode);
             roomRef.once('value', snapshot => {
                 if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    if (data.host === currentPlayerName) isHost = true;
                     listenToRoom();
                     document.getElementById('display-room-code').innerText = currentRoomCode;
                 } else {
@@ -572,6 +582,8 @@
         roomRef.set({
             state: 'lobby',
             host: name,
+            currentRound: 1,
+            maxRounds: 5,
             players: { [name]: true },
             scores: { [name]: 0 },
             usedScenarios: [],
@@ -618,6 +630,19 @@
 
             const playerNames = Object.keys(data.players || {});
             
+            // تحويل الهوست تلقائياً في حال خروج الأصلي
+            if (!data.players[data.host]) {
+                if (playerNames.length > 0) {
+                    const newHost = playerNames[0];
+                    roomRef.update({ host: newHost });
+                    if (newHost === currentPlayerName) isHost = true;
+                }
+            } else {
+                isHost = (data.host === currentPlayerName);
+            }
+
+            document.getElementById('display-round-tag').innerText = `جولة ${data.currentRound || 1} / 5`;
+
             const playersListDiv = document.getElementById('players-list');
             playersListDiv.innerHTML = '';
             playerNames.forEach(p => {
@@ -631,11 +656,11 @@
             document.getElementById('start-btn').style.display = isHost ? 'block' : 'none';
             document.getElementById('voting-btn').style.display = isHost ? 'block' : 'none';
             document.getElementById('next-btn').style.display = isHost ? 'block' : 'none';
+            document.getElementById('restart-game-btn').style.display = isHost ? 'block' : 'none';
 
             if (data.state === 'lobby') {
                 showScreen('lobby-screen');
             } else if (data.state === 'playing') {
-                myVotedPlayer = null;
                 const scenario = data.currentScenario;
                 const isFake = (currentPlayerName === data.fakePlayer);
                 
@@ -643,10 +668,10 @@
                 if (isFake) {
                     alertBox.innerHTML = `<div class="role-alert">🎭 أنت الناقد المخادع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
                 } else {
-                    alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت ناقد عادي! اكتشف الشخص الشاطح الذي يملك كلمة مختلفة!</div>`;
+                    alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت ناقد عادي! اكتشف الشخص الذي يملك كلمة مختلفة!</div>`;
                 }
 
-                const wordToShow = isFake ? scenario.fake : scenario.original;
+                const wordToShow = isFake ? scenario.fake : scenario.orig;
                 document.getElementById('scenario-text').innerHTML = scenario.text.replace("[WORD]", `<span style="color:var(--accent); font-weight:800; text-decoration: underline;">${wordToShow}</span>`);
                 showScreen('game-screen');
             } else if (data.state === 'voting') {
@@ -655,6 +680,9 @@
             } else if (data.state === 'reveal') {
                 showRevealScreen(data);
                 showScreen('reveal-screen');
+            } else if (data.state === 'championship') {
+                showChampionshipScreen(data);
+                showScreen('championship-screen');
             }
         });
     }
@@ -671,6 +699,7 @@
 
             roomRef.update({
                 state: 'playing',
+                currentRound: 1,
                 fakePlayer: randomFake,
                 currentScenario: newScenario,
                 usedScenarios: used,
@@ -687,9 +716,11 @@
         const optionsDiv = document.getElementById('voting-options');
         optionsDiv.innerHTML = '';
 
+        const myVote = votes[currentPlayerName];
+
         playerNames.forEach(p => {
             if (p !== currentPlayerName) {
-                const isSelected = (myVotedPlayer === p);
+                const isSelected = (myVote === p);
                 optionsDiv.innerHTML += `
                     <div class="vote-card ${isSelected ? 'selected' : ''}" onclick="playClickSound(); submitVote('${p}')">
                         <span>صوّت ضد: <b>${p}</b></span>
@@ -702,14 +733,14 @@
         const totalPlayers = playerNames.length;
         document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
 
-        // انتقال تلقائي فور اكتمال تصويت جميع اللاعبين
-        if (isHost && totalVotes >= totalPlayers && totalPlayers > 0) {
-            hostCalculateResults();
+        if (totalVotes >= totalPlayers && totalPlayers > 0) {
+            if (isHost) {
+                hostCalculateResults();
+            }
         }
     }
 
     function submitVote(votedPlayer) {
-        myVotedPlayer = votedPlayer;
         roomRef.child('votes/' + currentPlayerName).set(votedPlayer);
     }
 
@@ -772,16 +803,16 @@
                 الناقد المخادع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
             </p>
             <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 18px; border: 1px solid var(--panel-border); text-align: right; line-height: 1.8;">
-                <div>• الكلمة عند النقاد العاديين: <b style="color:var(--accent);">${scenario.original}</b></div>
+                <div>• الكلمة عند النقاد العاديين: <b style="color:var(--accent);">${scenario.orig}</b></div>
                 <div style="margin-top:8px;">• الكلمة المخادعة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
             </div>
         `;
 
-        updateLeaderboardList(data.scores || {});
+        updateLeaderboardList('leaderboard-list', data.scores || {});
     }
 
-    function updateLeaderboardList(scores) {
-        const leaderboardDiv = document.getElementById('leaderboard-list');
+    function updateLeaderboardList(elementId, scores) {
+        const leaderboardDiv = document.getElementById(elementId);
         leaderboardDiv.innerHTML = '';
         
         const sortedPlayers = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
@@ -798,10 +829,70 @@
     }
 
     function hostNextRound() {
-        hostStartGame();
+        roomRef.once('value', snapshot => {
+            const data = snapshot.val();
+            let currentRound = data.currentRound || 1;
+
+            if (currentRound >= 5) {
+                roomRef.update({ state: 'championship' });
+            } else {
+                const playerNames = Object.keys(data.players || {});
+                const randomFake = playerNames[Math.floor(Math.random() * playerNames.length)];
+                
+                let used = data.usedScenarios || [];
+                let newScenario = getUniqueScenario(used);
+                used.push(newScenario.index);
+
+                roomRef.update({
+                    state: 'playing',
+                    currentRound: currentRound + 1,
+                    fakePlayer: randomFake,
+                    currentScenario: newScenario,
+                    usedScenarios: used,
+                    votes: {}
+                });
+            }
+        });
     }
 
-    // خلفية متحركة
+    function showChampionshipScreen(data) {
+        const scores = data.scores || {};
+        const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+        const winner = sorted[0] || 'لا يوجد';
+
+        document.getElementById('winner-display').innerHTML = `
+            <div style="font-size:3.5rem; margin-bottom:10px;">🏆</div>
+            <div style="font-size:1.1rem; color:var(--text-sub);">بطل البطولة والأكثر ذكاءً:</div>
+            <div style="font-size:2rem; font-weight:900; color:var(--accent); margin-top:5px;">${winner}</div>
+            <div style="font-size:1.2rem; color:var(--success); font-weight:800; margin-top:5px;">بـ ${scores[winner]} نقطة!</div>
+        `;
+
+        updateLeaderboardList('final-leaderboard-list', scores);
+    }
+
+    function hostRestartTournament() {
+        roomRef.once('value', snapshot => {
+            const data = snapshot.val();
+            const playerNames = Object.keys(data.players || {});
+            let resetScores = {};
+            playerNames.forEach(p => resetScores[p] = 0);
+
+            const randomFake = playerNames[Math.floor(Math.random() * playerNames.length)];
+            let newScenario = getUniqueScenario([]);
+
+            roomRef.update({
+                state: 'playing',
+                currentRound: 1,
+                scores: resetScores,
+                fakePlayer: randomFake,
+                currentScenario: newScenario,
+                usedScenarios: [newScenario.index],
+                votes: {}
+            });
+        });
+    }
+
+    // خلفية
     const canvas = document.getElementById('cinema-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
