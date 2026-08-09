@@ -443,7 +443,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • 200 سيناريو موزع بذكاء لمنع التكرار
+        ناقد السينما &copy; 2026 • إصلاح تعليق الهوست وتوليد 200 سيناريو
     </footer>
 
 <script>
@@ -464,8 +464,8 @@
     let currentPlayerName = null;
     let isHost = false;
     let roomRef = null;
+    let isCalculating = false; // حماية ضد التعليق والتكرار
 
-    // بنك القواعد والقطع التوليدية لإنتاج 200 سيناريو فريد ومنطقي دون تكرار
     const PLOT_BASES = [
         { t: "يتعرض متحف اللوفر لعملية سطو غامضة منتصف الليل، حيث يتم استخدام **[WORD]** لتعطيل أجهزة الإنذار السرية والتسلل دون ترك أي أثر.", o: "قنبلة الدخان", f: "الغاز المسهِر" },
         { t: "في رحلة استكشافية وسط الغابات النارية، يكتشف الفريق أن البقاء على قيد الحياة يعتمد كلياً على مهارة استخدام **[WORD]** للإشارة للطائرات.", o: "الشعلة الضوئية", f: "المرآة العاكسة" },
@@ -482,7 +482,6 @@
     const HEROES = ["المحقق الجنائي", "العميل السري", "البروفيسور العباقرة", "الصحفي الاستقصائي", "حارس الأمن الخبير", "المكتشف الجريء", "قائد القوات الخاصة", "المهندس الإلكتروني", "الملازم الأول", "الخبير التكتيكي"];
     const SETTINGS = ["في قلب العاصمة", "في محطة الأبحاث القطبية", "وسط أزقة المدينة القديمة", "داخل القاعدة العسكرية المجهزة", "في منتجع الجبال الثلجية", "على متن الغواصة النووية", "في المختبر المتروك", "داخل البرج السكني الضخم", "في المحمية الطبيعية", "وسط قلعة القرون الوسطى"];
 
-    // توليد مصفوفة بـ 200 سيناريو فريد
     let SCENARIOS = [];
     let count = 0;
 
@@ -508,7 +507,6 @@
         for (let i = 0; i < SCENARIOS.length; i++) {
             if (!usedIndexes.includes(i)) available.push(i);
         }
-        // إذا انتهت الـ 200 سيناريو بالكامل أعد التصفير للغرفة
         if (available.length === 0) available = SCENARIOS.map((_, idx) => idx);
 
         let chosenIdx = available[Math.floor(Math.random() * available.length)];
@@ -630,7 +628,6 @@
 
             const playerNames = Object.keys(data.players || {});
             
-            // تحويل الهوست تلقائياً في حال خروج الأصلي
             if (!data.players[data.host]) {
                 if (playerNames.length > 0) {
                     const newHost = playerNames[0];
@@ -659,8 +656,10 @@
             document.getElementById('restart-game-btn').style.display = isHost ? 'block' : 'none';
 
             if (data.state === 'lobby') {
+                isCalculating = false;
                 showScreen('lobby-screen');
             } else if (data.state === 'playing') {
+                isCalculating = false;
                 const scenario = data.currentScenario;
                 const isFake = (currentPlayerName === data.fakePlayer);
                 
@@ -678,9 +677,11 @@
                 setupVotingScreen(playerNames, data.votes || {});
                 showScreen('voting-screen');
             } else if (data.state === 'reveal') {
+                isCalculating = false;
                 showRevealScreen(data);
                 showScreen('reveal-screen');
             } else if (data.state === 'championship') {
+                isCalculating = false;
                 showChampionshipScreen(data);
                 showScreen('championship-screen');
             }
@@ -733,8 +734,10 @@
         const totalPlayers = playerNames.length;
         document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
 
+        // تحويل أوتوماتيكي محمي ومستقر بدون تكرار
         if (totalVotes >= totalPlayers && totalPlayers > 0) {
-            if (isHost) {
+            if (isHost && !isCalculating) {
+                isCalculating = true;
                 hostCalculateResults();
             }
         }
