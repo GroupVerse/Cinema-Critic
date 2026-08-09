@@ -38,13 +38,11 @@
             position: relative;
         }
 
-        #cinema-canvas, #fx-canvas {
+        #cinema-canvas {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none;
         }
-
-        #fx-canvas { z-index: 99; }
 
         .navbar {
             width: 100%;
@@ -298,7 +296,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* جدول المراكز */
         .leaderboard {
             background: rgba(7, 9, 14, 0.85);
             border-radius: 16px;
@@ -326,7 +323,6 @@
 <body>
 
     <canvas id="cinema-canvas"></canvas>
-    <canvas id="fx-canvas"></canvas>
 
     <header class="navbar">
         <div class="brand">🍿 ناقد السينما</div>
@@ -405,10 +401,9 @@
             <!-- 4. التصويت المستقل -->
             <div id="voting-screen" class="screen">
                 <div class="title">من الناقد المخادع؟ 🤔</div>
-                <div class="subtitle">اختر الشخص صاحب التفاصيل الشاطحة (تصويتك سري وخاص بك):</div>
+                <div class="subtitle">اختر الشخص صاحب التفاصيل الشاطحة (تصويتك سري):</div>
                 <div id="voting-options"></div>
                 <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 15px; font-weight:700;"></div>
-                <button class="btn btn-primary" id="finish-vote-btn" style="display:none;" onclick="playClickSound(); hostCalculateResults()">إنهاء الجولة وإظهار النتائج 🏆</button>
             </div>
 
             <!-- 5. كشف الحقيقة والسيناريو -->
@@ -430,7 +425,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • تصويت مستقل + نظام نقاط ذكي
+        ناقد السينما &copy; 2026 • سيناريوهات ذكية وتصويت تلقائي
     </footer>
 
 <script>
@@ -453,22 +448,57 @@
     let roomRef = null;
     let myVotedPlayer = null;
 
-    const characters = ["محقق جنائي", "طباخ عالمي", "بطل خارق", "طيار مدني", "عالم فيزياء", "مليونير بخيل", "شاعر كلاسيكي", "رائد فضاء", "مهرج سيرك", "حارس أمن"];
-    const locations = ["غابة مهجورة", "جزيرة نائية", "متحف أثري", "مكوك فضائي", "قصور كلاسيكية", "محطة قطار قديمة", "مختبر سري", "قمة جبلية", "منجم ذهب", "مقهى شعبي"];
-    const secretsOriginal = ["شبح غاضب", "مومياء ذهبية", "آلة زمن", "شاورما سحرية", "خزنة مجوهرات", "كتاب الأسرار", "لوحة مسروقة", "وصفة حلى", "طبق طائر", "جراب فلوس"];
-    const secretsFake = ["دب مفترس", "وصفة كبسة", "ساعة حائط", "ساندويتش بيض", "صندوق بريد", "دفتر ديون", "رسالة ملغومة", "صحن فول", "سيارة غولف", "حقيبة مدرسية"];
-    const actions = ["سرقة الكنز والهروب", "الزواج من الملكة", "فك شفرة القنبلة", "حل أسطورة المكان", "الانتصار على الغريم", "فتح البوابة السرية", "إعادة الكوكب لنصابه", "كشف الحقيقة للجميع"];
+    // بنك سيناريوهات ضخم ومترابط منطقياً (كلمة مخادعة قريبة جداً من الأصلية)
+    const SCENARIO_DATABASE = [
+        // فئة المأكولات والمشروبات
+        { t: "في فيلم وثائقي حائز على جوائز، يسافر الشيف الشهير للبحث عن سر أكلة **[WORD]** التقليدية.", orig: "السوشي الياباني", fake: "البيتزا الإيطالية" },
+        { t: "تتطرق الحبكة إلى مؤامرة داخل مطعم فخم للسطو على الوصفة السرية لـ **[WORD]**.", orig: "الكرواسون الفرنسي", fake: "الكيك الكلاسيكي" },
+        { t: "يبدأ الفيلم بجرائم غامضة تقع في المقهى بعد تقديم مشروب **[WORD]** المجهول.", orig: "القهوة المقطرة", fake: "الشاي الأخضر" },
+        { t: "تدور الأحداث حول طباخ يكتشف أن تناول **[WORD]** يعطيه قدرة على قراءة الأفكار.", orig: "الشاورما الإيطالية", fake: "البرجر الأمريكي" },
+        
+        // فئة الأماكن والأثريات
+        { t: "يتلقى المحقق بلاغاً عاجلاً عن اختفاء تمثال أثري نادِر من داخل **[WORD]**.", orig: "متحف اللوفر", fake: "قصر فيرساي" },
+        { t: "في فيلم إثارة وخيال، يفتح البطل بوابة زمنية سرية مخبأة خلف **[WORD]**.", orig: "المكتبة الوطنية", fake: "المتحف المائي" },
+        { t: "تبدأ المطاردة الشرسة بين العصابة والشرطة بين أزقة **[WORD]** المظلمة.", orig: "البلدة القديمة", fake: "السوق الشعبي" },
+        { t: "يتجمع الرفاق بعد سنوات طويلة لقضاء العطلة في **[WORD]** المجهول.", orig: "المنتجع الجبلي", fake: "الكوخ الصحراوي" },
 
-    function generateScenario(seed) {
-        let charIndex = (seed * 3 + 1) % characters.length;
-        let locIndex = (seed * 7 + 2) % locations.length;
-        let secIndex = (seed * 11 + 5) % secretsOriginal.length;
-        let actIndex = (seed * 13 + 3) % actions.length;
+        // فئة أدوات وأجهزة
+        { t: "في فيلم خيال علمي، يعثر مخترع عبقري في ورشته على **[WORD]** عجيب.", orig: "نظارة الواقع الافتراضي", fake: "شاشة التحكم الذكية" },
+        { t: "تدور القصة حول شريحة إلكترونية مسروقة تم إخفاؤها ببراعة داخل **[WORD]**.", orig: "الساعة الذكية", fake: "الهاتف الذكي" },
+        { t: "في دراما تشويقية، تكون الأداة الوحيدة لكشف الجريمة هي **[WORD]**.", orig: "كاميرا المراقبة", fake: "جهاز التسجيل الصوتي" },
+
+        // فئة وسائل النقل والرحلات
+        { t: "تتحول رحلة استجمام هادئة على متن **[WORD]** إلى لغز جريمة غامض.", orig: "اليخت الملكي", fake: "القطار السريع" },
+        { t: "يحاول المغامر الهرب من المطاردين باستخدام **[WORD]** المجهز بمحركات خاصة.", orig: "طائرة الهليكوبتر", fake: "السيارة الرياضية" },
+        { t: "تبدأ المغامرة البحرية الكبرى ببحث الطاقم عن **[WORD]** المفقود وسط المحيط.", orig: "قارب الصيد القديم", fake: "منطاد الهواء الساخن" }
+    ];
+
+    // ولد سيناريوهات إضافية ديناميكية للوصول لأكثر من 400 تركيب
+    const extraActors = ["العميل السري", "البروفيسور", "المليونير الغامض", "الصحفي الاستقصائي", "المكتشف الجريء"];
+    const extraGoals = ["فك لغز الخريطة المسروقة", "استعادة الإرث المفقود", "كشف المؤامرة العالمية", "إحراز النصر الكبير"];
+
+    function getUniqueScenario(usedIndexes) {
+        let available = [];
+        for (let i = 0; i < SCENARIO_DATABASE.length; i++) {
+            if (!usedIndexes.includes(i)) available.push(i);
+        }
+
+        // إذا انتهت السيناريوهات أعد التصفير
+        if (available.length === 0) {
+            available = SCENARIO_DATABASE.map((_, idx) => idx);
+        }
+
+        let chosenIdx = available[Math.floor(Math.random() * available.length)];
+        let base = SCENARIO_DATABASE[chosenIdx];
+        
+        let actor = extraActors[Math.floor(Math.random() * extraActors.length)];
+        let goal = extraGoals[Math.floor(Math.random() * extraGoals.length)];
 
         return {
-            text: `يتجه ${characters[charIndex]} إلى ${locations[locIndex]} في مهمة غامضة، ليكتشف أن السر الحقيقي يكمن في **[WORD]**، فيقرر بناءً عليه ${actions[actIndex]}.`,
-            original: secretsOriginal[secIndex],
-            fake: secretsFake[secIndex]
+            index: chosenIdx,
+            text: `${actor} يخوض مغامرة معقدة لـ ${goal}، وتتغير مجريات الأمور عندما يكتشف أن السر متعلق بـ **[WORD]**. ${base.t}`,
+            original: base.orig,
+            fake: base.fake
         };
     }
 
@@ -494,6 +524,28 @@
         document.getElementById('room-top-bar').style.display = 
             (screenId === 'home-screen' || screenId === 'host-setup-screen' || screenId === 'join-setup-screen') ? 'none' : 'flex';
     }
+
+    // استعادة الجلسة عند تحديث الصفحة أو الخروج بالخطأ
+    window.addEventListener('load', () => {
+        const savedRoom = localStorage.getItem('cc_room');
+        const savedName = localStorage.getItem('cc_name');
+        if (savedRoom && savedName) {
+            currentRoomCode = savedRoom;
+            currentPlayerName = savedName;
+            roomRef = db.ref('rooms/' + currentRoomCode);
+            roomRef.once('value', snapshot => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.host === currentPlayerName) isHost = true;
+                    listenToRoom();
+                    document.getElementById('display-room-code').innerText = currentRoomCode;
+                } else {
+                    localStorage.removeItem('cc_room');
+                    localStorage.removeItem('cc_name');
+                }
+            });
+        }
+    });
 
     function exitToMainMenu() {
         if (roomRef && currentPlayerName) {
@@ -522,7 +574,8 @@
             host: name,
             players: { [name]: true },
             scores: { [name]: 0 },
-            scenarioSeed: Math.floor(Math.random() * 10000),
+            usedScenarios: [],
+            currentScenario: getUniqueScenario([]),
             fakePlayer: name
         }).then(() => {
             localStorage.setItem('cc_room', currentRoomCode);
@@ -583,7 +636,7 @@
                 showScreen('lobby-screen');
             } else if (data.state === 'playing') {
                 myVotedPlayer = null;
-                const scenario = generateScenario(data.scenarioSeed);
+                const scenario = data.currentScenario;
                 const isFake = (currentPlayerName === data.fakePlayer);
                 
                 const alertBox = document.getElementById('role-alert-box');
@@ -611,12 +664,16 @@
             const data = snapshot.val();
             const playerNames = Object.keys(data.players || {});
             const randomFake = playerNames[Math.floor(Math.random() * playerNames.length)];
-            const newSeed = Math.floor(Math.random() * 10000);
+            
+            let used = data.usedScenarios || [];
+            let newScenario = getUniqueScenario(used);
+            used.push(newScenario.index);
 
             roomRef.update({
                 state: 'playing',
                 fakePlayer: randomFake,
-                scenarioSeed: newSeed,
+                currentScenario: newScenario,
+                usedScenarios: used,
                 votes: {}
             });
         });
@@ -645,18 +702,9 @@
         const totalPlayers = playerNames.length;
         document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
 
-        // منع الهوست من السكيب حتى يصوت الجميع بالكامل
-        const finishBtn = document.getElementById('finish-vote-btn');
-        if (isHost) {
-            if (totalVotes >= totalPlayers) {
-                finishBtn.style.display = 'block';
-                finishBtn.innerText = 'إنهاء الجولة وإظهار الحقيقة 🏆';
-            } else {
-                finishBtn.style.display = 'block';
-                finishBtn.disabled = true;
-                finishBtn.style.opacity = '0.5';
-                finishBtn.innerText = 'في انتظار إكمال تصويت جميع اللاعبين... ⏳';
-            }
+        // انتقال تلقائي فور اكتمال تصويت جميع اللاعبين
+        if (isHost && totalVotes >= totalPlayers && totalPlayers > 0) {
+            hostCalculateResults();
         }
     }
 
@@ -699,7 +747,7 @@
     }
 
     function showRevealScreen(data) {
-        const scenario = generateScenario(data.scenarioSeed);
+        const scenario = data.currentScenario;
         const votes = data.votes || {};
         const myVote = votes[currentPlayerName];
         const fakePlayer = data.fakePlayer;
@@ -707,7 +755,6 @@
 
         let isCorrect = false;
         if (isFake) {
-            // الناقد المخادع يعتبر فائزاً إذا لم ينقفط من الجميع
             const playerNames = Object.keys(data.players || {});
             const caughtCount = Object.values(votes).filter(v => v === fakePlayer).length;
             isCorrect = (caughtCount < playerNames.length - 1);
@@ -730,7 +777,6 @@
             </div>
         `;
 
-        // تحديث القائمة التراكمية في الخلفية لشاشة المراكز
         updateLeaderboardList(data.scores || {});
     }
 
@@ -755,7 +801,7 @@
         hostStartGame();
     }
 
-    // خلفية
+    // خلفية متحركة
     const canvas = document.getElementById('cinema-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
