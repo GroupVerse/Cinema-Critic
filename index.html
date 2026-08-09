@@ -281,7 +281,6 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        /* أنيميشن احترافي لنتائج الإجابة (صح / خطأ) */
         .result-anim-card {
             padding: 24px;
             border-radius: 22px;
@@ -555,7 +554,6 @@
         return { index: chosenIdx, ...FULL_SCENARIOS[chosenIdx] };
     }
 
-    // نظام أصوات محسن بترددات متوازنة ومستوى صوت متوسط غير مزعج
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function playClickSound() {
@@ -579,14 +577,12 @@
         const gain = audioCtx.createGain();
         
         if (isCorrect) {
-            // صوت نجاح هادئ ومتوسط (نغمة تصاعدية لطيفة)
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15);
             gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
         } else {
-            // صوت خطأ هادئ ومتوسط (نغمة تنازلية ناعمة)
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(220, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(146.83, audioCtx.currentTime + 0.18);
@@ -871,7 +867,6 @@
             isCorrect = (myVote === fakePlayer);
         }
 
-        // تشغيل صوت النتيجة (صح أو خطأ)
         playResultSound(isCorrect);
 
         let animHTML = isCorrect ? 
@@ -973,7 +968,6 @@
         });
     }
 
-    // خلفية
     const canvas = document.getElementById('cinema-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
