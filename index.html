@@ -212,6 +212,7 @@
         .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, #6d28d9 100%); color: #fff; }
         .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--panel-border); }
         .btn-danger { background: linear-gradient(135deg, var(--danger) 0%, #be123c 100%); color: #fff; }
+        .btn-success { background: linear-gradient(135deg, var(--success) 0%, #047857 100%); color: #fff; }
 
         .players-list {
             background: rgba(0,0,0,0.4);
@@ -407,12 +408,14 @@
                 <button class="btn btn-danger" id="voting-btn" onclick="playClickSound(); hostGoToVoting()">الانتقال لمرحلة التصويت 🗳️</button>
             </div>
 
-            <!-- 4. التصويت المستقل -->
+            <!-- 4. التصويت مع مرونة التعديل وزر تحكم الهوست -->
             <div id="voting-screen" class="screen">
                 <div class="title">من الناقد المخادع؟ 🤔</div>
-                <div class="subtitle">اختر الشخص صاحب الكلمة المختلفة (تصويتك سري):</div>
+                <div class="subtitle">اختر الشخص أو اضغط مجدداً لتغيير تصويتك:</div>
                 <div id="voting-options"></div>
                 <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 15px; font-weight:700;"></div>
+                <!-- زر يظهر للهوست فقط بعد اكتمال تصويت الجميع -->
+                <button class="btn btn-success" id="host-reveal-btn" style="display: none; margin-top: 20px;" onclick="playClickSound(); hostCalculateResults()">عرض النتائج وكشف الحقيقة 🔍</button>
             </div>
 
             <!-- 5. كشف الحقيقة -->
@@ -443,7 +446,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • إصلاح تعليق الهوست وتوليد 200 سيناريو
+        ناقد السينما &copy; 2026 • 200 سيناريو وتحكم كامل للهوست
     </footer>
 
 <script>
@@ -464,7 +467,6 @@
     let currentPlayerName = null;
     let isHost = false;
     let roomRef = null;
-    let isCalculating = false; // حماية ضد التعليق والتكرار
 
     const PLOT_BASES = [
         { t: "يتعرض متحف اللوفر لعملية سطو غامضة منتصف الليل، حيث يتم استخدام **[WORD]** لتعطيل أجهزة الإنذار السرية والتسلل دون ترك أي أثر.", o: "قنبلة الدخان", f: "الغاز المسهِر" },
@@ -656,10 +658,8 @@
             document.getElementById('restart-game-btn').style.display = isHost ? 'block' : 'none';
 
             if (data.state === 'lobby') {
-                isCalculating = false;
                 showScreen('lobby-screen');
             } else if (data.state === 'playing') {
-                isCalculating = false;
                 const scenario = data.currentScenario;
                 const isFake = (currentPlayerName === data.fakePlayer);
                 
@@ -677,11 +677,9 @@
                 setupVotingScreen(playerNames, data.votes || {});
                 showScreen('voting-screen');
             } else if (data.state === 'reveal') {
-                isCalculating = false;
                 showRevealScreen(data);
                 showScreen('reveal-screen');
             } else if (data.state === 'championship') {
-                isCalculating = false;
                 showChampionshipScreen(data);
                 showScreen('championship-screen');
             }
@@ -723,9 +721,9 @@
             if (p !== currentPlayerName) {
                 const isSelected = (myVote === p);
                 optionsDiv.innerHTML += `
-                    <div class="vote-card ${isSelected ? 'selected' : ''}" onclick="playClickSound(); submitVote('${p}')">
+                    <div class="vote-card ${isSelected ? 'selected' : ''}" onclick="playClickSound(); toggleVote('${p}')">
                         <span>صوّت ضد: <b>${p}</b></span>
-                        <span>${isSelected ? '✅ تم الاختيار' : '👈'}</span>
+                        <span>${isSelected ? '✅ تم اختيارك (اضغط للإلغاء)' : '👈'}</span>
                     </div>`;
             }
         });
@@ -734,17 +732,25 @@
         const totalPlayers = playerNames.length;
         document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
 
-        // تحويل أوتوماتيكي محمي ومستقر بدون تكرار
-        if (totalVotes >= totalPlayers && totalPlayers > 0) {
-            if (isHost && !isCalculating) {
-                isCalculating = true;
-                hostCalculateResults();
-            }
+        const revealBtn = document.getElementById('host-reveal-btn');
+        if (isHost && totalVotes >= totalPlayers && totalPlayers > 0) {
+            revealBtn.style.display = 'block';
+        } else {
+            revealBtn.style.display = 'none';
         }
     }
 
-    function submitVote(votedPlayer) {
-        roomRef.child('votes/' + currentPlayerName).set(votedPlayer);
+    function toggleVote(votedPlayer) {
+        const voteRef = roomRef.child('votes/' + currentPlayerName);
+        voteRef.once('value', snapshot => {
+            if (snapshot.val() === votedPlayer) {
+                // إذا ضغط على نفس الشخص اللي صوّت له مسبقاً، يحذف صوته (تعديل الاختيار)
+                voteRef.remove();
+            } else {
+                // يصوت للشخص الجديد
+                voteRef.set(votedPlayer);
+            }
+        });
     }
 
     function hostCalculateResults() {
