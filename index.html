@@ -246,6 +246,22 @@
             text-align: right;
         }
 
+        .instructions-box {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            text-align: right;
+        }
+
+        .instructions-box h4 {
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
         .vote-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--panel-border);
@@ -265,26 +281,44 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
+        /* أنيميشن احترافي لنتائج الإجابة (صح / خطأ) */
         .result-anim-card {
-            padding: 20px;
-            border-radius: 20px;
+            padding: 24px;
+            border-radius: 22px;
             text-align: center;
-            font-size: 1.3rem;
-            font-weight: 800;
-            margin: 15px 0;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .result-anim-card.correct {
-            background: rgba(16, 185, 129, 0.2);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%);
             border: 2px solid var(--success);
             color: #6ee7b7;
+            animation: pulseCorrect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
         }
 
         .result-anim-card.wrong {
-            background: rgba(244, 63, 94, 0.2);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.25) 0%, rgba(190, 18, 60, 0.4) 100%);
             border: 2px solid var(--danger);
             color: #fca5a5;
+            animation: shakeWrong 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        @keyframes pulseCorrect {
+            0% { transform: scale(0.7); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shakeWrong {
+            0%, 100% { transform: translateX(0); opacity: 0; }
+            20% { transform: translateX(-12px); opacity: 1; }
+            40% { transform: translateX(12px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+            100% { transform: translateX(0); opacity: 1; }
         }
 
         .winner-box {
@@ -300,11 +334,6 @@
         @keyframes trophyBounce {
             from { transform: translateY(0); }
             to { transform: translateY(-8px); }
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .leaderboard {
@@ -347,10 +376,17 @@
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
-            <!-- 1. الرئيسية -->
+            <!-- 1. الرئيسية مع شروط وشرح اللعبة -->
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
-                <div class="subtitle">اختر كيف تريد البدء اليوم:</div>
+                <div class="subtitle">لعبة الخداع والتحليل السينمائي الأقوى</div>
+
+                <div class="instructions-box">
+                    <h4>📖 كيف تقتل الملل وتلعب؟</h4>
+                    <p>• أحدكم سيكون <b>الناقد المخادع</b> ويتلقى قصة بكلمة مختلفة تماماً عن البقية.<br>
+                    • اقرأوا السيناريو وسولفوا مع بعض، وكل شخص يدافع عن تفاصيل قصته لاكتشاف من هو المخادع!<br>
+                    • بنك عشوائي مدمج بـ 1000 قصة فريدة لمنع التكرار نهائياً.</p>
+                </div>
 
                 <div class="mode-selection-box">
                     <div class="mode-card" onclick="playClickSound(); showScreen('host-setup-screen')">
@@ -404,7 +440,7 @@
             <div id="game-screen" class="screen">
                 <div class="title">مشهد الفيلم 🎬</div>
                 <div id="role-alert-box"></div>
-                <div class="scenario-box" id="scenario-text">جاري تحميل المشهد المثير...</div>
+                <div class="scenario-box" id="scenario-text">جاري توليد مشهد عشوائي فريد...</div>
                 <button class="btn btn-danger" id="voting-btn" onclick="playClickSound(); hostGoToVoting()">الانتقال لمرحلة التصويت 🗳️</button>
             </div>
 
@@ -445,7 +481,7 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • بنك سيناريوهات ضخم ومحبوك للسوالف
+        ناقد السينما &copy; 2026 • أصوات متوسطة وأنيميشن تفاعلي
     </footer>
 
 <script>
@@ -467,80 +503,42 @@
     let isHost = false;
     let roomRef = null;
 
-    // بنك ضخم من القوالب القصصية الطويلة والمشوقة المصممة للنقاش والسوالف
-    const PLOT_TEMPLATES = [
-        {
-            intro: "أثناء مهمة سرية لاستعادة لوحة فنية مسروقة تقدر بملايين الدولارات من قصر مشبوه في أطراف باريس، ينشب خلاف حاد بين أفراد العصابة بعد اكتشاف اختفاء الأدات الرئيسية المخصصة لفتح الخزنة الحديدية وهي عبارة عن **[WORD]**.",
-            orig: "جهاز الليزر الماسح",
-            fake: "مثقاب الألماس الحاد"
-        },
-        {
-            intro: "في تفاصيل جريمة قتل غامضة وقعت داخل قطار الشرق السريع السائر وسط العاصفة، يعثر المحقق البارع على جثة رجل أعمال مسموماً، وبجانبه حقيبة مفتوحة تحتوي على آثار تخص **[WORD]** كدليل وحيد لفك اللغز قبل الوصول للمحطة.",
-            orig: "السموم المخبرية النادرة",
-            fake: "الكبسولات الدوائية المنومة"
-        },
-        {
-            intro: "في كواليس تصوير أضخم فيلم خيال علمي هوليوودي، يقرر المخرج تغيير مجرى المشهد الخطير بشكل مفاجئ ويطلب من البطل استخدام **[WORD]** الحقيقي بدلاً من النموذج المزيف، مما يدخل طاقم العمل في أزمة حقيقية.",
-            orig: "مسدس الطلق الفارغ",
-            fake: "الذخيرة الحية المؤكدة"
-        },
-        {
-            intro: "وسط أعماق المحيط الهادئ، تتعرض غواصة أبحاث عسكرية لعطل فني كارثي يهدد بغرق الطاقم بالكامل، ولا تنجح محاولات التواصل مع القاعدة إلا حينما ينجح المهندس في إعادة تشغيل نظام الطوارئ عبر **[WORD]** الاحتياطي.",
-            orig: "مولد الطاقة النووي",
-            fake: "بطارية الليثيوم الرئيسية"
-        },
-        {
-            intro: "في ليلة مظلمة ومرعبة داخل مصحة نفسية مهجورة، يتتبع الصحفي الاستقصائي تحركات طبيب مجنون كان يجري تجارب محرمة، ويعثر في غرفته السرية على أوراق تثبت تورطه في إخفاء ملفات باستخدام **[WORD]** المقفل.",
-            orig: "الخزنة الرقمية المشفرة",
-            fake: "الدرج الخشبي السري"
-        },
-        {
-            intro: "خلال سباق فورمولا 1 الحاسم على حلبة موناكو الشهيرة، يتعرض المتسابق الأبرز لمضايقة خطيرة في المنعطف الأخير تجبره على اتخاذ قرار مجنون واستخدام **[WORD]** لتجاوز المنافس بطريقة قانونية ولكنها مرعبة.",
-            orig: "نظام نيتروس الدفع",
-            fake: "مكابح الطوارئ الكربونية"
-        },
-        {
-            intro: "في قلب الأمازون الكثيفة، يضيع فريق استكشاف أثري بعد تعرض مخيمهم لهجوم عاصفة مدمرة، ويبدأون بالبحث عن وسيلة إغاثة سريعة عبر إشعال **[WORD]** لترشد طائرات الإنقاذ لموقعهم قبل نفاد المؤونة.",
-            orig: "مشاعل الإشارة الضوئية",
-            fake: "النار الكبيرة المستدامة"
-        },
-        {
-            intro: "تتحول رحلة سياحية فاخرة على متن قطار صحراوي إلى عملية احتجاز رهائن مثيرة، ويحاول العميل المتخفي إرسال رسالة استغاثة سرية للخارج عبر تهريب رسالة مخبأة داخل **[WORD]** الخاص بأحد الركاب.",
-            orig: "ساعة اليد الفاخرة",
-            fake: "حافظة المستندات الجلدية"
-        },
-        {
-            intro: "في مختبر سري تحت الأرض يعج بالروبوتات المتطورة، تحدث ثفرة تقنية وتخرج الذكاء الاصطناعي عن السيطرة، ولا يمكن إيقاف النظام المارق المدمر إلا باختراق اللوحة الأم عبر وصلة **[WORD]** المباشرة.",
-            orig: "الكابل البصري المزدوج",
-            fake: "سلك البيانات اللاسلكي"
-        },
-        {
-            intro: "في قضية فساد هزت أروقة البورصة العالمية، يتم اغتيال الشاهد الرئيسي قبل الإدلاء بشهادته بساعات، ولا يترك خلفه سوى شفرة سرية مسجلة على **[WORD]** مدفون تحت مكتبه في الشركة.",
-            orig: "قرص التخزين الصلب",
-            fake: "الشريط السري القديم"
-        }
+    const PLOT_CORES = [
+        { intro: "أثناء عملية سطو جريئة على البنك المركزي بمنتصف الليل، يكتشف اللصوص أن خوارزميات الأمان لا يمكن تجاوزها إلا باستخدام **[WORD]** المعقد.", o: "مفتاح البصمة الرقمية", f: "بطاقة الرمز السري اليدوي" },
+        { intro: "في تفاصيل جريمة غموض هزت أوساط هوليوود، يُعثر على المخرج الشهير مقتولاً وفي يده دليل متبقي يخص **[WORD]** المخبأ في مكتبه.", o: "شريط الكاميرا الأصلي", f: "سجل الاتصالات المحذوف" },
+        { intro: "على متن محطة الفضاء الدولية المعزولة، يحدث تسريب كيماوي خطير يهدد حياة الطاقم، ولا يمكن إيقاف نظام التدمير الذاتي سوى عبر لوحة **[WORD]**.", o: "صمام الأمان الأساسي", f: "زر الطوارئ الاحتياطي" },
+        { intro: "خلال سباق السيارات الأضخم في صحراء دبي، يتعرض المتسابق لموقف مرعب يجبره على تشغيل **[WORD]** لتفادي الاصطدام القاتل.", o: "نظام الدفع النفاث", f: "مكابح الأمان الهيدروليكية" },
+        { intro: "في رحلة استكشافية مرعبة داخل الغابات العميقة، يضيع الفريق ويتضح أن نجاتهم معتمدة على دقة استخدام **[WORD]** المتبقي لديهم.", o: "جهاز الإرسال الفضائي", f: "بوصلة التوجيه المغناطيسية" },
+        { intro: "في كواليس المحكمة الكبرى، تُسرق أدلة إدانة زعيم المافيا الخطير من الخزنة السرية ولا يترك الجاني سوى بقايا من **[WORD]**.", o: "الخاتم الذهبي المرصع", f: "ساعة اليد الفاخرة" },
+        { intro: "وسط أجواء العاصفة الثلجية القارسة في سويسرا، تتعطل طائرة خاصة ويحاول الركاب النجاة عبر إشعال **[WORD]** لطلب النجدة.", o: "مشاعل الإضاءة الحرارية", f: "الحطب الكاشف للدخان" },
+        { intro: "في مختبر سري تحت الأرض، تخرج تجارب الهندسة الوراثية عن السيطرة، ولا يمكن إغلاق الباب المصفح إلا ببطاقة **[WORD]**.", o: "الماسح الشبكي للعين", f: "بطاقة المرور البلاستيكية" },
+        { intro: "في قضية فساد سياسي كبرى، يحاول الصحفي تسريب مستندات إدانة خطيرة عبر إخفائها بعناية داخل **[WORD]** وإرسالها لطرف ثالث.", o: "ذاكرة التخزين الصلبة", f: "الظرف البريدي المغلق" },
+        { intro: "في عرض أزياء عالمي بباريس، تتعرض جوهرة القصر الملكي للسرقة، ويشتبه المحقق في أن اللص استخدم **[WORD]** للتمويه.", o: "قنبلة الغاز المسيل", f: "ألعاب الدخان الملونة" }
     ];
 
-    // لتوليد خلطات سيناريوهات لا تنتهي وتمنع التكرار نهائياً
-    const LOCATIONS = ["في قلب العاصمة المزدحمة", "داخل القلعة التاريخية المظلمة", "في محطة الفضاء الدولية المعزولة", "فوق قمة الجبل الجليدي القاسي", "داخل استوديو التصوير السينمائي الضخم", "على متن يخت الملياردير الغامض"];
-    const CHARACTERS = ["المحقق المخضرم جك", "العميل السري المتمرد", "البروفيسور العبقري المجنون", "الصحفي الاستقصائي الجريء", "حارس الأمن المحترف", "اللص الذكي المحترف"];
+    const CHARACTERS_LIST = ["المحقق المخضرم آرثر", "العميل السري كين", "القرصان الإلكتروني زورو", "البروفيسور العبقري لويس", "الحارس الشخصي ماكس", "الصحفي الاستقصائي ريان", "الضابط المسؤول هاريسون", "العميلة المزدوجة سارة", "رئيس التحقيقات مايكل", "المغامر الجريء توم"];
+    const LOCATIONS_LIST = ["في قلب العاصمة المظلمة", "داخل القلعة التاريخية المنسية", "فوق قمة ناطحة السحاب الزجاجية", "على متن يخت الملياردير الفاخر", "في أعماق الغواصة العسكرية", "داخل استوديو التصوير المهجور", "في المحطة القطبية المتجمدة", "وسط حلبة القتال السرية", "داخل القطار السريع العابر للقارات", "في المطار الدولي المعزول"];
+    const TONES_LIST = ["في أجواء مليئة بالتوتر والشك", "وسط ظروف غامضة لا توصف", "بينما تقترب ساعة الصفر بسرعة", "في سباق محموم ضد الزمن", "بينما يراقب الجميع بصمت قاتل", "في لحظة حاسمة لتحديد المصير"];
 
     let FULL_SCENARIOS = [];
     let counter = 0;
 
-    // دمج القوالب مع المواقع والشخصيات لتوليد مئات السيناريوهات الدسمة والطويلة القابلة للنقاش
-    for (let i = 0; i < PLOT_TEMPLATES.length; i++) {
-        for (let j = 0; j < LOCATIONS.length; j++) {
-            for (let k = 0; k < CHARACTERS.length; k++) {
-                let template = PLOT_TEMPLATES[i];
-                let fullText = `بطل المشهد هو (${CHARACTERS[k]}) ${LOCATIONS[j]}:\n\n${template.intro}`;
-                FULL_SCENARIOS.push({
-                    id: counter,
-                    text: fullText,
-                    orig: template.orig,
-                    fake: template.fake
-                });
-                counter++;
+    for (let i = 0; i < PLOT_CORES.length; i++) {
+        for (let j = 0; j < CHARACTERS_LIST.length; j++) {
+            for (let k = 0; k < LOCATIONS_LIST.length; k++) {
+                if (counter < 1000) {
+                    let core = PLOT_CORES[i];
+                    let tone = TONES_LIST[counter % TONES_LIST.length];
+                    let text = `الشخصية الرئيسية (${CHARACTERS_LIST[j]}) ${LOCATIONS_LIST[k]} (${tone}):\n\n${core.intro}`;
+                    
+                    FULL_SCENARIOS.push({
+                        id: counter,
+                        text: text,
+                        orig: core.o,
+                        fake: core.f
+                    });
+                    counter++;
+                }
             }
         }
     }
@@ -552,24 +550,54 @@
         }
         if (available.length === 0) available = FULL_SCENARIOS.map((_, idx) => idx);
 
-        let chosenIdx = available[Math.floor(Math.random() * available.length)];
+        let randomPos = Math.floor(Math.random() * available.length);
+        let chosenIdx = available[randomPos];
         return { index: chosenIdx, ...FULL_SCENARIOS[chosenIdx] };
     }
 
+    // نظام أصوات محسن بترددات متوازنة ومستوى صوت متوسط غير مزعج
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
     function playClickSound() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(320, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(540, audioCtx.currentTime + 0.04);
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.04);
+        osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function playResultSound(isCorrect) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        if (isCorrect) {
+            // صوت نجاح هادئ ومتوسط (نغمة تصاعدية لطيفة)
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+        } else {
+            // صوت خطأ هادئ ومتوسط (نغمة تنازلية ناعمة)
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(146.83, audioCtx.currentTime + 0.18);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+        }
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
     }
 
     function showScreen(screenId) {
@@ -620,6 +648,8 @@
         currentRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
         roomRef = db.ref('rooms/' + currentRoomCode);
 
+        let firstScenario = getUniqueScenario([]);
+
         roomRef.set({
             state: 'lobby',
             host: name,
@@ -627,8 +657,8 @@
             maxRounds: 5,
             players: { [name]: true },
             scores: { [name]: 0 },
-            usedScenarios: [],
-            currentScenario: getUniqueScenario([]),
+            usedScenarios: [firstScenario.index],
+            currentScenario: firstScenario,
             fakePlayer: name
         }).then(() => {
             localStorage.setItem('cc_room', currentRoomCode);
@@ -840,6 +870,9 @@
         } else {
             isCorrect = (myVote === fakePlayer);
         }
+
+        // تشغيل صوت النتيجة (صح أو خطأ)
+        playResultSound(isCorrect);
 
         let animHTML = isCorrect ? 
             `<div class="result-anim-card correct">🎉 إجابة صحيحة! (+1 نقطة)</div>` : 
