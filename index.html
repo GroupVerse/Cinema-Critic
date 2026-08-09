@@ -38,26 +38,13 @@
             position: relative;
         }
 
-        #cinema-canvas {
+        #cinema-canvas, #fx-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
         }
 
-        /* كباري التأثيرات */
-        #fx-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 99;
-            pointer-events: none;
-        }
+        #fx-canvas { z-index: 99; }
 
         .navbar {
             width: 100%;
@@ -70,15 +57,11 @@
         }
 
         .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
             font-size: 1.5rem;
             font-weight: 900;
             background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
         }
 
         .badge {
@@ -97,7 +80,6 @@
             padding: 0 16px;
             margin: auto 0;
             z-index: 10;
-            position: relative;
         }
 
         .glass-panel {
@@ -107,13 +89,10 @@
             border: 1px solid var(--panel-border);
             border-radius: 28px;
             padding: 32px 24px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
             position: relative;
-            overflow: hidden;
         }
 
-        /* القائمة العلوية داخل الغرفة */
         .room-top-bar {
             display: flex;
             justify-content: space-between;
@@ -131,9 +110,6 @@
             border-radius: 12px;
             font-weight: 800;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .btn-exit-top {
@@ -145,10 +121,6 @@
             font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .btn-exit-top:hover {
@@ -168,40 +140,26 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin-bottom: 8px;
+        .title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; text-align: center; }
+        .subtitle { color: var(--text-sub); font-size: 0.92rem; text-align: center; margin-bottom: 22px; }
+
+        /* شارة التنبيه للناقد المخدوع */
+        .role-alert {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 15px;
             text-align: center;
         }
 
-        .subtitle {
-            color: var(--text-sub);
-            font-size: 0.92rem;
-            text-align: center;
-            margin-bottom: 22px;
-            line-height: 1.5;
-        }
-
-        .how-to-play {
-            background: rgba(139, 92, 246, 0.08);
-            border: 1px solid rgba(139, 92, 246, 0.25);
-            border-radius: 18px;
-            padding: 16px 18px;
-            margin-bottom: 22px;
-            font-size: 0.88rem;
-            line-height: 1.6;
-            color: #cbd5e1;
-        }
-
-        .how-to-play h4 {
-            color: var(--accent);
-            margin-bottom: 6px;
-            font-size: 0.95rem;
-        }
-
-        .how-to-play ul {
-            padding-right: 18px;
+        .role-alert.normal {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--success);
+            color: #6ee7b7;
         }
 
         .mode-selection-box {
@@ -227,10 +185,6 @@
             transform: translateY(-3px);
         }
 
-        .mode-card .icon { font-size: 2rem; margin-bottom: 8px; }
-        .mode-card .mode-title { font-weight: 800; font-size: 1rem; color: #fff; }
-        .mode-card .mode-desc { font-size: 0.78rem; color: var(--text-sub); margin-top: 4px; }
-
         .input-group { margin-bottom: 16px; }
 
         input {
@@ -243,13 +197,6 @@
             font-size: 1rem;
             text-align: center;
             outline: none;
-            transition: all 0.3s;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px var(--primary-glow);
-            background: rgba(7, 9, 14, 0.9);
         }
 
         .btn {
@@ -260,7 +207,6 @@
             font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
-            transition: all 0.2s;
             margin-top: 10px;
             display: flex;
             align-items: center;
@@ -268,25 +214,9 @@
             gap: 10px;
         }
 
-        .btn:active { transform: scale(0.97); }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #6d28d9 100%);
-            color: #fff;
-            box-shadow: 0 8px 25px var(--primary-glow);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            border: 1px solid var(--panel-border);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger) 0%, #be123c 100%);
-            color: #fff;
-            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.4);
-        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, #6d28d9 100%); color: #fff; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--panel-border); }
+        .btn-danger { background: linear-gradient(135deg, var(--danger) 0%, #be123c 100%); color: #fff; }
 
         .players-list {
             background: rgba(0,0,0,0.4);
@@ -306,7 +236,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.95rem;
         }
 
         .scenario-box {
@@ -333,53 +262,34 @@
             cursor: pointer;
             transition: all 0.25s;
             color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
         }
 
-        .vote-card:hover {
-            border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.15);
-            transform: translateX(-6px);
+        .vote-card.selected {
+            border-color: var(--accent);
+            background: rgba(251, 191, 36, 0.15);
         }
 
-        .result-box {
+        /* جدول النقاط */
+        .leaderboard {
             background: rgba(7, 9, 14, 0.85);
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             margin: 15px 0;
             border: 1px solid var(--panel-border);
-            text-align: right;
         }
 
-        .result-box div { margin: 10px 0; font-size: 1rem; }
-
-        /* أثر الخسارة السينمائية */
-        .cinema-defeat-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(244,63,94,0.3) 0%, rgba(0,0,0,0.85) 100%);
-            z-index: 98;
-            pointer-events: none;
-            animation: flashDefeat 0.8s ease-out forwards;
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        @keyframes flashDefeat {
-            0% { opacity: 0; transform: scale(1.1); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; }
-        }
+        .leaderboard-item:last-child { border-bottom: none; }
 
-        .footer {
-            padding: 20px;
-            color: var(--text-sub);
-            font-size: 0.85rem;
-            text-align: center;
-            z-index: 10;
-        }
+        .footer { padding: 20px; color: var(--text-sub); font-size: 0.85rem; text-align: center; z-index: 10; }
     </style>
 
-    <!-- Firebase Compat SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 </head>
@@ -387,7 +297,6 @@
 
     <canvas id="cinema-canvas"></canvas>
     <canvas id="fx-canvas"></canvas>
-    <div id="defeat-effect"></div>
 
     <header class="navbar">
         <div class="brand">🍿 ناقد السينما</div>
@@ -395,68 +304,54 @@
     </header>
 
     <main class="main-container">
-        <div class="glass-panel" id="main-panel">
+        <div class="glass-panel">
 
-            <!-- القائمة العلوية للغرفة (تظهر داخل اللعبة) -->
             <div class="room-top-bar" id="room-top-bar" style="display: none;">
                 <div class="room-tag">🎟️ رمز الروم: <span id="display-room-code">----</span></div>
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
-            <!-- 1. الشاشة الرئيسية اختيار الخيار -->
+            <!-- 1. الرئيسية -->
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
                 <div class="subtitle">اختر كيف تريد البدء اليوم:</div>
 
-                <div class="how-to-play">
-                    <h4>📖 طريقة اللعب:</h4>
-                    <ul>
-                        <li><b>الجميع:</b> يشاهدون نفس السيناريو بنفس الكلمة السرية.</li>
-                        <li><b>الناقد المخدوع:</b> يحصل على كلمة شاطحة مختلفة تماماً!</li>
-                        <li><b>المطلوب:</b> كشف الناقد بدون كشف كلمتكم!</li>
-                    </ul>
-                </div>
-
                 <div class="mode-selection-box">
-                    <div class="mode-card" onclick="playClickSound(); openHostSetup()">
-                        <div class="icon">👑</div>
-                        <div class="mode-title">إنشاء غرفة</div>
-                        <div class="mode-desc">أنشئ غرفة وكن الهوست</div>
+                    <div class="mode-card" onclick="playClickSound(); showScreen('host-setup-screen')">
+                        <div style="font-size: 2rem;">👑</div>
+                        <div style="font-weight: 800; color: #fff;">إنشاء غرفة</div>
+                        <div style="font-size:0.78rem; color: var(--text-sub);">أنشئ غرفة وكن الهوست</div>
                     </div>
 
-                    <div class="mode-card" onclick="playClickSound(); openJoinSetup()">
-                        <div class="icon">🎟️</div>
-                        <div class="mode-title">انضمام لغرفة</div>
-                        <div class="mode-desc">ادخل باستخدام رمز الروم</div>
+                    <div class="mode-card" onclick="playClickSound(); showScreen('join-setup-screen')">
+                        <div style="font-size: 2rem;">🎟️</div>
+                        <div style="font-weight: 800; color: #fff;">انضمام لغرفة</div>
+                        <div style="font-size:0.78rem; color: var(--text-sub);">ادخل باستخدام رمز الروم</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 1-A. إعداد إنشاء غرفة -->
+            <!-- 1-A. إنشاء غرفة -->
             <div id="host-setup-screen" class="screen">
                 <div class="title">إنشاء غرفة جديدة 👑</div>
                 <div class="subtitle">ادخل اسمك لإنشاء استوديو خاص بك</div>
-
                 <div class="input-group">
                     <input type="text" id="host-name-input" placeholder="اسمك داخل اللعبة...">
                 </div>
-
                 <button class="btn btn-primary" onclick="playClickSound(); createRoom()">تأكيد وإنشاء الغرفة ✨</button>
                 <button class="btn btn-secondary" onclick="playClickSound(); showScreen('home-screen')">إلغاء ↩️</button>
             </div>
 
-            <!-- 1-B. إعداد الانضمام لغرفة -->
+            <!-- 1-B. انضمام -->
             <div id="join-setup-screen" class="screen">
                 <div class="title">الانضمام لغرفة 🎟️</div>
                 <div class="subtitle">ادخل اسمك ورمز الروم للدخول</div>
-
                 <div class="input-group">
                     <input type="text" id="join-name-input" placeholder="اسمك داخل اللعبة...">
                 </div>
                 <div class="input-group">
                     <input type="text" id="room-code-input" placeholder="رمز الغرفة (مثال: 4821)">
                 </div>
-
                 <button class="btn btn-primary" onclick="playClickSound(); joinRoom()">تأكيد الانضمام 🚀</button>
                 <button class="btn btn-secondary" onclick="playClickSound(); showScreen('home-screen')">إلغاء ↩️</button>
             </div>
@@ -465,33 +360,33 @@
             <div id="lobby-screen" class="screen">
                 <div class="title">غرفة الانتظار 🎭</div>
                 <div class="subtitle">في انتظار انضمام بقية النقاد...</div>
-
                 <div class="players-list" id="players-list"></div>
-
                 <button class="btn btn-primary" id="start-btn" onclick="playClickSound(); hostStartGame()">ابدأ العرض الآن 🚀</button>
             </div>
 
             <!-- 3. السيناريو -->
             <div id="game-screen" class="screen">
                 <div class="title">قصة الفيلم 🎬</div>
-                <div class="subtitle">تناقشوا بحذر وبدون ذكر الكلمة صراحة!</div>
-
+                <div id="role-alert-box"></div>
                 <div class="scenario-box" id="scenario-text">جاري تحميل المشهد...</div>
-
                 <button class="btn btn-danger" id="voting-btn" onclick="playClickSound(); hostGoToVoting()">الانتقال لمرحلة التصويت 🗳️</button>
             </div>
 
-            <!-- 4. التصويت -->
+            <!-- 4. التصويت المستقل -->
             <div id="voting-screen" class="screen">
                 <div class="title">من الناقد المخدوع؟ 🤔</div>
-                <div class="subtitle">صوّت للشخص صاحب الإجابات الشاطحة:</div>
+                <div class="subtitle">اختر الشخص صاحب التفاصيل الشاطحة (تصويتك سري وخاص بك):</div>
                 <div id="voting-options"></div>
+                <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 10px; font-weight:700;"></div>
+                <button class="btn btn-primary" id="finish-vote-btn" style="display:none;" onclick="playClickSound(); hostCalculateResults()">إنهاء الجولة وإظهار النتائج 🏆</button>
             </div>
 
-            <!-- 5. النتائج -->
+            <!-- 5. النتائج والترتيب -->
             <div id="results-screen" class="screen">
                 <div class="title" id="result-title">كشف الحقيقة 🏆</div>
                 <div id="result-content"></div>
+                <div style="font-weight: 800; margin-top: 15px; text-align: center; color: var(--accent);">📊 جدول ترتيب النقاط:</div>
+                <div class="leaderboard" id="leaderboard-list"></div>
                 <button class="btn btn-primary" id="next-btn" onclick="playClickSound(); hostNextRound()">الجولة التالية 🔄</button>
             </div>
 
@@ -499,11 +394,10 @@
     </main>
 
     <footer class="footer">
-        ناقد السينما &copy; 2026 • حفظ ذكي + مؤشرات سينمائية مطورة
+        ناقد السينما &copy; 2026 • تصويت مستقل + نظام نقاط ذكي
     </footer>
 
 <script>
-    // --- 1. Firebase Configuration ---
     const firebaseConfig = {
       apiKey: "AIzaSyCXFvGrTfFewmYwFC1ansck4cB4QIUJ4k",
       authDomain: "cinema-critic.firebaseapp.com",
@@ -521,8 +415,8 @@
     let currentPlayerName = null;
     let isHost = false;
     let roomRef = null;
+    let myVotedPlayer = null;
 
-    // --- 2. السيناريوهات (+1000 سيناريو) ---
     const characters = ["محقق جنائي", "طباخ عالمي", "بطل خارق", "طيار مدني", "عالم فيزياء", "مليونير بخيل", "شاعر كلاسيكي", "رائد فضاء", "مهرج سيرك", "حارس أمن"];
     const locations = ["غابة مهجورة", "جزيرة نائية", "متحف أثري", "مكوك فضائي", "قصور كلاسيكية", "محطة قطار قديمة", "مختبر سري", "قمة جبلية", "منجم ذهب", "مقهى شعبي"];
     const secretsOriginal = ["شبح غاضب", "مومياء ذهبية", "آلة زمن", "شاورما سحرية", "خزنة مجوهرات", "كتاب الأسرار", "لوحة مسروقة", "وصفة حلى", "طبق طائر", "جراب فلوس"];
@@ -535,19 +429,14 @@
         let secIndex = (seed * 11 + 5) % secretsOriginal.length;
         let actIndex = (seed * 13 + 3) % actions.length;
 
-        let char = characters[charIndex];
-        let loc = locations[locIndex];
-        let orig = secretsOriginal[secIndex];
-        let fake = secretsFake[secIndex];
-        let act = actions[actIndex];
-
-        let text = `يتجه ${char} إلى ${loc} في مهمة غامضة، ليكتشف أن السر الحقيقي يكمن في **[WORD]**، فيقرر بناءً عليه ${act}.`;
-        return { text: text, original: orig, fake: fake };
+        return {
+            text: `يتجه ${characters[charIndex]} إلى ${locations[locIndex]} في مهمة غامضة، ليكتشف أن السر الحقيقي يكمن في **[WORD]**، فيقرر بناءً عليه ${actions[actIndex]}.`,
+            original: secretsOriginal[secIndex],
+            fake: secretsFake[secIndex]
+        };
     }
 
-    // --- 3. صوتيات هادئة وسينمائية محترفة (Soft Web Audio) ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     function playClickSound() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
@@ -563,64 +452,11 @@
         osc.stop(audioCtx.currentTime + 0.04);
     }
 
-    function playWinSound() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const chord = [392.00, 493.88, 587.33, 783.99]; // G major soft chord
-        chord.forEach((freq, i) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-            let start = audioCtx.currentTime + (i * 0.08);
-            gain.gain.setValueAtTime(0.05, start);
-            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.45);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(start);
-            osc.stop(start + 0.45);
-        });
-    }
-
-    function playLossSound() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.4);
-        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.4);
-    }
-
-    // --- 4. التحكم بالشاشات والبار العلوي ---
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-
-        const topBar = document.getElementById('room-top-bar');
-        if (screenId === 'home-screen' || screenId === 'host-setup-screen' || screenId === 'join-setup-screen') {
-            topBar.style.display = 'none';
-        } else {
-            topBar.style.display = 'flex';
-        }
-    }
-
-    function openHostSetup() { showScreen('host-setup-screen'); }
-    function openJoinSetup() { showScreen('join-setup-screen'); }
-
-    // --- 5. إدارة الجلسات والعودة للقائمة ---
-    function saveSession(room, name) {
-        localStorage.setItem('cc_room', room);
-        localStorage.setItem('cc_name', name);
-    }
-
-    function clearSession() {
-        localStorage.removeItem('cc_room');
-        localStorage.removeItem('cc_name');
+        document.getElementById('room-top-bar').style.display = 
+            (screenId === 'home-screen' || screenId === 'host-setup-screen' || screenId === 'join-setup-screen') ? 'none' : 'flex';
     }
 
     function exitToMainMenu() {
@@ -628,36 +464,14 @@
             roomRef.child('players/' + currentPlayerName).remove();
             roomRef.off();
         }
-        clearSession();
+        localStorage.removeItem('cc_room');
+        localStorage.removeItem('cc_name');
         currentRoomCode = null;
         currentPlayerName = null;
         roomRef = null;
         showScreen('home-screen');
     }
 
-    function checkSavedSession() {
-        const savedRoom = localStorage.getItem('cc_room');
-        const savedName = localStorage.getItem('cc_name');
-
-        if (savedRoom && savedName) {
-            currentPlayerName = savedName;
-            currentRoomCode = savedRoom;
-            roomRef = db.ref('rooms/' + currentRoomCode);
-
-            roomRef.once('value', snapshot => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    isHost = (data.host === savedName);
-                    listenToRoom();
-                    document.getElementById('display-room-code').innerText = currentRoomCode;
-                } else {
-                    clearSession();
-                }
-            });
-        }
-    }
-
-    // --- 6. أونلاين والغرف ---
     function createRoom() {
         const name = document.getElementById('host-name-input').value.trim();
         if (!name) return alert('ادخل اسمك أولاً');
@@ -667,16 +481,16 @@
         currentRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
         roomRef = db.ref('rooms/' + currentRoomCode);
 
-        const initialData = {
+        roomRef.set({
             state: 'lobby',
             host: name,
             players: { [name]: true },
+            scores: { [name]: 0 },
             scenarioSeed: Math.floor(Math.random() * 10000),
             fakePlayer: name
-        };
-
-        roomRef.set(initialData).then(() => {
-            saveSession(currentRoomCode, name);
+        }).then(() => {
+            localStorage.setItem('cc_room', currentRoomCode);
+            localStorage.setItem('cc_name', name);
             listenToRoom();
             document.getElementById('display-room-code').innerText = currentRoomCode;
             showScreen('lobby-screen');
@@ -697,7 +511,10 @@
             if (!snapshot.exists()) return alert('الغرفة غير موجودة!');
 
             roomRef.child('players/' + name).set(true);
-            saveSession(currentRoomCode, name);
+            roomRef.child('scores/' + name).transaction(curr => curr || 0);
+
+            localStorage.setItem('cc_room', currentRoomCode);
+            localStorage.setItem('cc_name', name);
             listenToRoom();
             document.getElementById('display-room-code').innerText = currentRoomCode;
             showScreen('lobby-screen');
@@ -710,10 +527,11 @@
             const data = snapshot.val();
             if (!data) return;
 
-            const playersListDiv = document.getElementById('players-list');
-            playersListDiv.innerHTML = '';
             const playerNames = Object.keys(data.players || {});
             
+            // قائمة اللاعبين بالانتظار
+            const playersListDiv = document.getElementById('players-list');
+            playersListDiv.innerHTML = '';
             playerNames.forEach(p => {
                 playersListDiv.innerHTML += `
                     <div class="player-item">
@@ -729,15 +547,23 @@
             if (data.state === 'lobby') {
                 showScreen('lobby-screen');
             } else if (data.state === 'playing') {
+                myVotedPlayer = null;
                 const scenario = generateScenario(data.scenarioSeed);
                 const isFake = (currentPlayerName === data.fakePlayer);
-                const wordToShow = isFake ? scenario.fake : scenario.original;
-                const formattedText = scenario.text.replace("[WORD]", `<span style="color:var(--accent); font-weight:800; text-decoration: underline;">${wordToShow}</span>`);
                 
-                document.getElementById('scenario-text').innerHTML = formattedText;
+                // توضيح الدور صراحة للمستخدم
+                const alertBox = document.getElementById('role-alert-box');
+                if (isFake) {
+                    alertBox.innerHTML = `<div class="role-alert">🎭 أنت الناقد المخدوع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
+                } else {
+                    alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت ناقد عادي! اكتشف الشخص الشاطح الذي يملك كلمة مختلفة!</div>`;
+                }
+
+                const wordToShow = isFake ? scenario.fake : scenario.original;
+                document.getElementById('scenario-text').innerHTML = scenario.text.replace("[WORD]", `<span style="color:var(--accent); font-weight:800; text-decoration: underline;">${wordToShow}</span>`);
                 showScreen('game-screen');
             } else if (data.state === 'voting') {
-                setupVotingScreen(playerNames);
+                setupVotingScreen(playerNames, data.votes || {});
                 showScreen('voting-screen');
             } else if (data.state === 'results') {
                 showResultsScreen(data);
@@ -766,115 +592,106 @@
         roomRef.update({ state: 'voting' });
     }
 
-    function setupVotingScreen(playerNames) {
+    function setupVotingScreen(playerNames, votes) {
         const optionsDiv = document.getElementById('voting-options');
         optionsDiv.innerHTML = '';
+
         playerNames.forEach(p => {
-            optionsDiv.innerHTML += `
-                <div class="vote-card" onclick="playClickSound(); submitVote('${p}')">
-                    <span>صوّت ضد: <b>${p}</b></span>
-                    <span>👈</span>
-                </div>`;
+            if (p !== currentPlayerName) { // لا تصوت لنفسك
+                const isSelected = (myVotedPlayer === p);
+                optionsDiv.innerHTML += `
+                    <div class="vote-card ${isSelected ? 'selected' : ''}" onclick="playClickSound(); submitVote('${p}')">
+                        <span>صوّت ضد: <b>${p}</b></span>
+                        <span>${isSelected ? '✅ تم الاختيار' : '👈'}</span>
+                    </div>`;
+            }
         });
+
+        const totalVotes = Object.keys(votes).length;
+        const totalPlayers = playerNames.length;
+        document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
+
+        if (isHost) {
+            document.getElementById('finish-vote-btn').style.display = 'block';
+        }
     }
 
     function submitVote(votedPlayer) {
+        myVotedPlayer = votedPlayer;
         roomRef.child('votes/' + currentPlayerName).set(votedPlayer);
-        if (isHost) {
-            setTimeout(() => {
-                roomRef.update({ state: 'results' });
-            }, 1000);
-        }
+    }
+
+    function hostCalculateResults() {
+        roomRef.once('value', snapshot => {
+            const data = snapshot.val();
+            const votes = data.votes || {};
+            const playerNames = Object.keys(data.players || {});
+            const fakePlayer = data.fakePlayer;
+            let scores = data.scores || {};
+
+            playerNames.forEach(p => { if (!scores[p]) scores[p] = 0; });
+
+            let caughtByAll = true;
+
+            // حساب النقاط
+            playerNames.forEach(p => {
+                if (p !== fakePlayer) {
+                    if (votes[p] === fakePlayer) {
+                        scores[p] += 1; // نقطة لكل لاعب اكتشف الناقد المخدوع
+                    } else {
+                        caughtByAll = false; // لم ينقفط من الجميع
+                    }
+                }
+            });
+
+            // إذا لم ينقفط الناقد المخدوع من الجميع، يأخذ هو نقطة
+            if (!caughtByAll) {
+                scores[fakePlayer] += 1;
+            }
+
+            roomRef.update({
+                scores: scores,
+                state: 'results'
+            });
+        });
     }
 
     function showResultsScreen(data) {
         const scenario = generateScenario(data.scenarioSeed);
-        const resultTitle = document.getElementById('result-title');
-        const resultContent = document.getElementById('result-content');
-
-        const isFake = (currentPlayerName === data.fakePlayer);
-
-        if (isFake) {
-            triggerDefeatFX();
-            playLossSound();
-        } else {
-            triggerConfettiFX();
-            playWinSound();
-        }
-
-        resultTitle.innerHTML = 'كشف الحقيقة 🏆';
-        resultContent.innerHTML = `
+        document.getElementById('result-title').innerHTML = 'كشف الحقيقة 🏆';
+        
+        document.getElementById('result-content').innerHTML = `
             <p style="text-align: center; color: var(--text-sub); margin-bottom: 18px;">
                 الناقد المخدوع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
             </p>
-            <div class="result-box">
+            <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 16px; border: 1px solid var(--panel-border); text-align: right;">
                 <div>• الكلمة عند الجميع: <b style="color:var(--accent);">${scenario.original}</b></div>
-                <div>• الكلمة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
+                <div style="margin-top:8px;">• الكلمة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
             </div>
         `;
+
+        // عرض قائمة الترتيب والنقاط
+        const leaderboardDiv = document.getElementById('leaderboard-list');
+        leaderboardDiv.innerHTML = '';
+        
+        const scores = data.scores || {};
+        const sortedPlayers = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+
+        sortedPlayers.forEach((p, idx) => {
+            leaderboardDiv.innerHTML += `
+                <div class="leaderboard-item">
+                    <span>${idx + 1}. <b>${p}</b> ${p === currentPlayerName ? '(أنت)' : ''}</span>
+                    <span style="color:var(--accent); font-weight:800;">${scores[p]} نقطة</span>
+                </div>
+            `;
+        });
     }
 
     function hostNextRound() {
         hostStartGame();
     }
 
-    // --- 7. أنيميشن الفوز والخسارة السينمائي المطور ---
-    const fxCanvas = document.getElementById('fx-canvas');
-    const fxCtx = fxCanvas.getContext('2d');
-    function resizeFx() { fxCanvas.width = window.innerWidth; fxCanvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeFx);
-    resizeFx();
-
-    let confettiParticles = [];
-
-    function triggerConfettiFX() {
-        confettiParticles = [];
-        const colors = ['#8b5cf6', '#fbbf24', '#10b981', '#f43f5e', '#3b82f6'];
-        for (let i = 0; i < 90; i++) {
-            confettiParticles.push({
-                x: fxCanvas.width / 2,
-                y: fxCanvas.height / 2,
-                vx: (Math.random() - 0.5) * 14,
-                vy: (Math.random() - 0.7) * 14,
-                size: Math.random() * 8 + 4,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                alpha: 1,
-                gravity: 0.22
-            });
-        }
-        animateFX();
-    }
-
-    function triggerDefeatFX() {
-        const defeatBox = document.getElementById('defeat-effect');
-        defeatBox.className = 'cinema-defeat-overlay';
-        setTimeout(() => { defeatBox.className = ''; }, 800);
-    }
-
-    function animateFX() {
-        fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
-        let active = false;
-
-        confettiParticles.forEach(p => {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += p.gravity;
-            p.alpha -= 0.015;
-
-            if (p.alpha > 0) {
-                active = true;
-                fxCtx.save();
-                fxCtx.globalAlpha = p.alpha;
-                fxCtx.fillStyle = p.color;
-                fxCtx.fillRect(p.x, p.y, p.size, p.size);
-                fxCtx.restore();
-            }
-        });
-
-        if (active) requestAnimationFrame(animateFX);
-    }
-
-    // --- 8. خلفية سينمائية متحركة ---
+    // خلفية
     const canvas = document.getElementById('cinema-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -883,41 +700,27 @@
 
     const iconList = ['🎬', '🎭', '💥', '👻', '🍿', '📜', '🎥', '🔪', '🕵️‍♂️'];
     let floatingIcons = [];
-    for (let i = 0; i < 22; i++) {
+    for (let i = 0; i < 20; i++) {
         floatingIcons.push({
             icon: iconList[Math.floor(Math.random() * iconList.length)],
             x: Math.random() * canvas.width, y: Math.random() * canvas.height,
             size: Math.random() * 22 + 18, speedY: Math.random() * 0.6 + 0.2,
-            speedX: (Math.random() - 0.5) * 0.4, alpha: Math.random() * 0.35 + 0.1,
-            rotation: Math.random() * Math.PI * 2, rotSpeed: (Math.random() - 0.5) * 0.01
+            speedX: (Math.random() - 0.5) * 0.4, alpha: Math.random() * 0.35 + 0.1
         });
     }
 
-    let angle = 0;
     function renderCinemaBackground() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        angle += 0.008;
-        let spotX1 = canvas.width * 0.25 + Math.sin(angle) * 100;
-        let spot1 = ctx.createRadialGradient(spotX1, 0, 10, spotX1, canvas.height * 0.5, canvas.width * 0.4);
-        spot1.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
-        spot1.addColorStop(1, 'transparent');
-        ctx.fillStyle = spot1;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         floatingIcons.forEach(p => {
-            p.y -= p.speedY; p.x += p.speedX; p.rotation += p.rotSpeed;
+            p.y -= p.speedY; p.x += p.speedX;
             if (p.y < -50) { p.y = canvas.height + 50; p.x = Math.random() * canvas.width; }
-            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
+            ctx.save();
             ctx.globalAlpha = p.alpha; ctx.font = `${p.size}px Arial`;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(p.icon, 0, 0); ctx.restore();
+            ctx.fillText(p.icon, p.x, p.y); ctx.restore();
         });
         requestAnimationFrame(renderCinemaBackground);
     }
     renderCinemaBackground();
-
-    // فحص الجلسة المحفوظة تلقائياً
-    checkSavedSession();
 </script>
 </body>
 </html>
