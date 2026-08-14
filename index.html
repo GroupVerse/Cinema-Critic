@@ -180,6 +180,11 @@
             cursor: pointer;
             transition: all 0.25s;
         }
+        
+        .mode-card:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.08);
+        }
 
         .input-group { margin-bottom: 16px; }
 
@@ -287,84 +292,6 @@
             background: rgba(251, 191, 36, 0.15);
         }
 
-        .result-anim-wrapper {
-            position: relative;
-            overflow: visible;
-            border-radius: 22px;
-            margin: 30px 0 20px 0;
-        }
-
-        .spotlight-beam {
-            position: absolute;
-            top: -140px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 220px;
-            height: 200px;
-            pointer-events: none;
-            z-index: 5;
-            filter: blur(25px);
-            opacity: 0;
-            clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-            animation: lightDownDrop 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-        }
-
-        .spotlight-beam.green-light {
-            background: linear-gradient(180deg, rgba(16, 185, 129, 0.95) 0%, rgba(16, 185, 129, 0.15) 100%);
-            box-shadow: 0 0 50px 20px rgba(16, 185, 129, 0.5);
-        }
-
-        .spotlight-beam.red-light {
-            background: linear-gradient(180deg, rgba(244, 63, 94, 0.95) 0%, rgba(244, 63, 94, 0.15) 100%);
-            box-shadow: 0 0 50px 20px rgba(244, 63, 94, 0.5);
-        }
-
-        @keyframes lightDownDrop {
-            0% { top: -180px; opacity: 0; transform: translateX(-50%) scaleX(0.3); }
-            50% { opacity: 1; }
-            100% { top: -80px; opacity: 1; transform: translateX(-50%) scaleX(1.2); }
-        }
-
-        .result-anim-card {
-            padding: 24px;
-            border-radius: 22px;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 900;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .result-anim-card.correct {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%);
-            border: 2px solid var(--success);
-            color: #6ee7b7;
-            animation: pulseCorrect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-        }
-
-        .result-anim-card.wrong {
-            background: linear-gradient(135deg, rgba(244, 63, 94, 0.25) 0%, rgba(190, 18, 60, 0.4) 100%);
-            border: 2px solid var(--danger);
-            color: #fca5a5;
-            animation: shakeWrong 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-        }
-
-        @keyframes pulseCorrect {
-            0% { transform: scale(0.7); opacity: 0; }
-            70% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes shakeWrong {
-            0%, 100% { transform: translateX(0); opacity: 0; }
-            20% { transform: translateX(-12px); opacity: 1; }
-            40% { transform: translateX(12px); }
-            60% { transform: translateX(-8px); }
-            80% { transform: translateX(8px); }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-
         .winner-box {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
             border: 2px solid var(--accent);
@@ -420,6 +347,7 @@
                 <button class="btn-exit-top" onclick="playClickSound(); exitToMainMenu()">العودة 🏠</button>
             </div>
 
+            <!-- الشاشة الرئيسية -->
             <div id="home-screen" class="screen active">
                 <div class="title">مرحباً بك في الاستوديو 🎬</div>
                 <div class="subtitle">لعبة الخداع والتحليل الممتعة</div>
@@ -427,29 +355,32 @@
                 <div class="instructions-box">
                     <h4>📖 دليل اللعبة والقواعد الأساسية:</h4>
                     <p>1️⃣ **إنشاء الغرفة:** يقوم أحد اللاعبين بإنشاء غرفة ومشاركة الرمز مع بقية الأصدقاء.</p>
-                    <p>2️⃣ **استلام المشهد:** يظهر للجميع سيناريو درامي؛ الجميع تظهر له كلمة صحيحة، ولكن <b>لاعب واحد فقط (المخادع)</b> تظهر له كلمة بديلة دون أن يدري البقية.</p>
-                    <p>3️⃣ **النقاش والتحليل (قاعدة صارمة):** تحدثوا وناقشوا تفاصيل المشهد، ولكن <b>يُمنع منعاً باتاً ذكر الكلمة الحرفية أو تلميحها بشكل مكشوف</b> لئلا تنكشف اللعبة فوراً!</p>
-                    <p>4️⃣ **التصويت والنتيجة:** صوّت ضد من تشك أنه المخادع، وفي النهاية تكشف الحقيقة وتُحسب النقاط للأذكياء!</p>
+                    <p>2️⃣ **استلام المشهد:** يظهر للجميع سيناريو درامي بكلمة معينة، وباختلاف نمط اللعبة قد يعلم المخادع دوره أو لا يعلم أبداً!</p>
+                    <p>3️⃣ **النقاش والتحليل (قاعدة صارمة):** تحدثوا وناقشوا تفاصيل المشهد دون ذكر الكلمة الحرفية مباشرة لئلا تنكشف اللعبة!</p>
+                    <p>4️⃣ **التصويت والنتيجة:** صوّت ضد من تشك أنه المخادع قبل انتهاء الوقت، وفي النهاية تكشف الحقيقة!</p>
                 </div>
 
+                <div class="subtitle" style="font-weight: 800; margin-bottom: 10px; color: #fff;">اختر نمط اللعب المناسب:</div>
                 <div class="mode-selection-box">
-                    <div class="mode-card" onclick="playClickSound(); showScreen('host-setup-screen')">
-                        <div style="font-size: 2rem;">👑</div>
-                        <div style="font-weight: 800; color: #fff;">إنشاء غرفة</div>
-                        <div style="font-size:0.78rem; color: var(--text-sub);">أنشئ غرفة وكن الهوست</div>
+                    <div class="mode-card" onclick="playClickSound(); selectGameMode('known')">
+                        <div style="font-size: 2rem;">🕵️‍♂️</div>
+                        <div style="font-weight: 800; color: #fff; margin-top: 5px;">المخادع يعرف</div>
+                        <div style="font-size:0.75rem; color: var(--text-sub); margin-top: 4px;">المخادع يعلم أنه هو الشخص المستهدف</div>
                     </div>
 
-                    <div class="mode-card" onclick="playClickSound(); showScreen('join-setup-screen')">
-                        <div style="font-size: 2rem;">🎟️</div>
-                        <div style="font-weight: 800; color: #fff;">انضمام لغرفة</div>
-                        <div style="font-size:0.78rem; color: var(--text-sub);">ادخل باستخدام رمز الروم</div>
+                    <div class="mode-card" onclick="playClickSound(); selectGameMode('unknown')">
+                        <div style="font-size: 2rem;">🎭</div>
+                        <div style="font-weight: 800; color: #fff; margin-top: 5px;">المخادع لا يعرف</div>
+                        <div style="font-size:0.75rem; color: var(--text-sub); margin-top: 4px;">المخادع يتلقى الكلمة مثل البقية تماماً</div>
                     </div>
                 </div>
             </div>
 
+            <!-- إعدادات الهوست -->
             <div id="host-setup-screen" class="screen">
                 <div class="title">إنشاء غرفة جديدة 👑</div>
-                <div class="subtitle">ادخل اسمك لإنشاء استوديو خاص بك</div>
+                <div class="subtitle" id="host-mode-desc">ادخل اسمك لإنشاء استوديو خاص بك</div>
+                <div class="instructions-box" id="host-mode-alert" style="font-size: 0.85rem; padding: 10px 14px;"></div>
                 <div class="input-group">
                     <input type="text" id="host-name-input" placeholder="اسمك داخل اللعبة...">
                 </div>
@@ -457,9 +388,11 @@
                 <button class="btn btn-secondary" onclick="playClickSound(); showScreen('home-screen')">إلغاء ↩️</button>
             </div>
 
+            <!-- إعدادات الانضمام -->
             <div id="join-setup-screen" class="screen">
                 <div class="title">الانضمام لغرفة 🎟️</div>
-                <div class="subtitle">ادخل اسمك ورمز الروم للدخول</div>
+                <div class="subtitle" id="join-mode-desc">ادخل اسمك ورمز الروم للدخول</div>
+                <div class="instructions-box" id="join-mode-alert" style="font-size: 0.85rem; padding: 10px 14px;"></div>
                 <div class="input-group">
                     <input type="text" id="join-name-input" placeholder="اسمك داخل اللعبة...">
                 </div>
@@ -470,6 +403,7 @@
                 <button class="btn btn-secondary" onclick="playClickSound(); showScreen('home-screen')">إلغاء ↩️</button>
             </div>
 
+            <!-- غرفة الانتظار -->
             <div id="lobby-screen" class="screen">
                 <div class="title">غرفة الانتظار 🎭</div>
                 <div class="subtitle">في انتظار انضمام بقية المحللين...</div>
@@ -477,6 +411,7 @@
                 <button class="btn btn-primary" id="start-btn" onclick="playClickSound(); hostStartGame()">ابدأ البطولة الآن 🚀</button>
             </div>
 
+            <!-- شاشة اللعبة والمشهد -->
             <div id="game-screen" class="screen">
                 <div class="title">مشهد الفيلم 🎬</div>
                 <div id="role-alert-box"></div>
@@ -484,20 +419,23 @@
                 <button class="btn btn-danger" id="voting-btn" onclick="playClickSound(); hostGoToVoting()">الانتقال لمرحلة التصويت 🗳️</button>
             </div>
 
+            <!-- شاشة التصويت مع عداد دقيقة -->
             <div id="voting-screen" class="screen">
                 <div class="title">من المحلل المخادع؟ 🤔</div>
-                <div class="subtitle">اختر الشخص أو اضغط مجدداً لتغيير تصويتك:</div>
+                <div class="subtitle" id="voting-timer-text">ينتهي التصويت تلقائياً خلال: <span id="timer-countdown" style="color: var(--accent); font-weight:800;">60</span> ثانية</div>
                 <div id="voting-options"></div>
                 <div id="vote-status" style="text-align: center; color: var(--accent); margin-top: 15px; font-weight:700;"></div>
                 <button class="btn btn-success" id="host-reveal-btn" style="display: none; margin-top: 20px;" onclick="playClickSound(); hostCalculateResults()">عرض النتائج وكشف الحقيقة 🔍</button>
             </div>
 
+            <!-- كشف الحقيقة -->
             <div id="reveal-screen" class="screen">
                 <div class="title">كشف الحقيقة 🔍</div>
                 <div id="reveal-content"></div>
                 <button class="btn btn-primary" onclick="playClickSound(); showScreen('leaderboard-screen')">عرض المراكز والنقاط 📊</button>
             </div>
 
+            <!-- لوحة النتائج -->
             <div id="leaderboard-screen" class="screen">
                 <div class="title">🏆 ترتيب المحللين</div>
                 <div class="subtitle">الترتيب الحالي بعد هذه الجولة:</div>
@@ -505,6 +443,7 @@
                 <button class="btn btn-primary" id="next-btn" onclick="playClickSound(); hostNextRound()">الجولة التالية 🔄</button>
             </div>
 
+            <!-- شاشة البطولة النهائية -->
             <div id="championship-screen" class="screen">
                 <div class="title">🎉 نهائي البطولة 🎉</div>
                 <div class="subtitle">بعد جولات مثيرة من التنافس والذكاء!</div>
@@ -538,8 +477,10 @@
     let currentPlayerName = null;
     let isHost = false;
     let roomRef = null;
+    let selectedGameMode = 'known'; // 'known' or 'unknown'
+    let votingTimerInterval = null;
 
-    // بنك الـ 50 سيناريو الفريد والحقيقي والمكتوب بعناية فائقة بدون أي تكرار
+    // بنك الـ 50 سيناريو الفريد
     const FULL_SCENARIOS = [
         { id: 0, text: "المحقق آرثر في البنك المركزي:\n\nأثناء السطو الليلي، اكتشف اللصوص أن خوارزمية الخزنة تتطلب [WORD] حصري لفتحها.", orig: "مفتاح البصمة الرقمية", fake: "بطاقة الرمز السري اليدوي" },
         { id: 1, text: "العميل كين في استوديو هوليوود:\n\nوجد المخرج مقتولاً وبجواره دليل متبقي يخص [WORD] المخبأ في درج مكتبه الخاص.", orig: "شريط الكاميرا الأصلي", fake: "سجل الاتصالات المحذوف" },
@@ -622,439 +563,435 @@
         osc.stop(audioCtx.currentTime + 0.06);
     }
 
-    function playResultSound(isCorrect) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        
-        if (isCorrect) {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-        } else {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-        }
-        
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
-    }
-
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-        document.getElementById('room-top-bar').style.display = 
-            (screenId === 'home-screen' || screenId === 'host-setup-screen' || screenId === 'join-setup-screen') ? 'none' : 'flex';
     }
 
-    window.addEventListener('load', () => {
-        const savedRoom = localStorage.getItem('cc_room');
-        const savedName = localStorage.getItem('cc_name');
-        if (savedRoom && savedName) {
-            currentRoomCode = savedRoom;
-            currentPlayerName = savedName;
-            roomRef = db.ref('rooms/' + currentRoomCode);
-            roomRef.once('value', snapshot => {
-                if (snapshot.exists()) {
-                    listenToRoom();
-                    document.getElementById('display-room-code').innerText = currentRoomCode;
-                } else {
-                    localStorage.removeItem('cc_room');
-                    localStorage.removeItem('cc_name');
-                }
-            });
+    function selectGameMode(mode) {
+        selectedGameMode = mode;
+        const modeDescHost = document.getElementById('host-mode-desc');
+        const modeAlertHost = document.getElementById('host-mode-alert');
+        const modeDescJoin = document.getElementById('join-mode-desc');
+        const modeAlertJoin = document.getElementById('join-mode-alert');
+
+        if (mode === 'known') {
+            modeDescHost.innerText = "وضع: المخادع يعرف نفسه";
+            modeAlertHost.innerHTML = "⚠️ **تنبيه:** في هذا النمط، سيتم إعلام اللاعب المخادع صراحة بأنه هو المستهدف فور بدء المشهد.";
+            modeDescJoin.innerText = "وضع: المخادع يعرف نفسه";
+            modeAlertJoin.innerHTML = "⚠️ **تنبيه:** في هذا النمط، سيتم إعلام اللاعب المخادع صراحة بأنه هو المستهدف فور بدء المشهد.";
+        } else {
+            modeDescHost.innerText = "وضع: المخادع لا يعرف";
+            modeAlertHost.innerHTML = "🎭 **تنبيه:** في هذا النمط، يصله السيناريو بكلمة مختلفة مثل البقية تماماً دون أن يعلم مسبقاً بأنه المخادع!";
+            modeDescJoin.innerText = "وضع: المخادع لا يعرف";
+            modeAlertJoin.innerHTML = "🎭 **تنبيه:** في هذا النمط، يصله السيناريو بكلمة مختلفة مثل البقية تماماً دون أن يعلم مسبقاً بأنه المخادع!";
         }
-    });
+
+        // اختيار مكان الذهاب (إنشاء أم انضمام)
+        // سنظهر شاشة اختيار فرعية أو نتيحهما مباشرة، لكن لنبسط الأمر سنعرض خيارات إنشاء غرفة أو الانضمام عند الضغط على الكارد أو سنعرض شاشة وسيطة
+        // هنا سنعرض زرين لاختيار ما إذا كان يريد إنشاء أو انضمام بعد اختيار النمط، أو الانتقال لشاشات الإعداد مباشرة:
+        // دعنا نظهر نافذة اختيار هل تريد (إنشاء أو انضمام) للوضع الحالي:
+        let actionChoice = confirm("هل تريد إنشاء غرفة جديدة (اضغط موافق) أم الانضمام لغرفة موجودة (اضغط إلغاء)؟");
+        if (actionChoice) {
+            showScreen('host-setup-screen');
+        } else {
+            showScreen('join-setup-screen');
+        }
+    }
 
     function exitToMainMenu() {
-        if (roomRef && currentPlayerName) {
-            roomRef.child('players/' + currentPlayerName).remove();
-            roomRef.off();
-        }
-        localStorage.removeItem('cc_room');
-        localStorage.removeItem('cc_name');
+        if (roomRef) roomRef.off();
         currentRoomCode = null;
         currentPlayerName = null;
-        roomRef = null;
+        isHost = false;
+        document.getElementById('room-top-bar').style.display = 'none';
+        if (votingTimerInterval) clearInterval(votingTimerInterval);
         showScreen('home-screen');
     }
 
+    // دوال إنشاء وانضمام الغرف عبر Firebase
     function createRoom() {
-        const name = document.getElementById('host-name-input').value.trim();
-        if (!name) return alert('ادخل اسمك أولاً');
+        const nameInput = document.getElementById('host-name-input').value.trim();
+        if (!nameInput) {
+            alert("الرجاء إدخال اسمك أولاً!");
+            return;
+        }
 
-        currentPlayerName = name;
+        currentPlayerName = nameInput;
         isHost = true;
         currentRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
+
         roomRef = db.ref('rooms/' + currentRoomCode);
-
-        let firstScenario = getUniqueScenario([]);
-
-        roomRef.set({
-            state: 'lobby',
-            host: name,
+        
+        const initialData = {
+            host: currentPlayerName,
+            gameMode: selectedGameMode,
+            gameState: 'lobby',
             currentRound: 1,
-            maxRounds: 5,
-            players: { [name]: true },
-            scores: { [name]: 0 },
-            usedScenarios: [firstScenario.index],
-            currentScenario: firstScenario,
-            fakePlayer: name
-        }).then(() => {
-            localStorage.setItem('cc_room', currentRoomCode);
-            localStorage.setItem('cc_name', name);
-            listenToRoom();
+            usedScenarios: { 0: 0 },
+            players: {
+                [currentPlayerName]: {
+                    name: currentPlayerName,
+                    score: 0,
+                    vote: ""
+                }
+            }
+        };
+
+        roomRef.set(initialData).then(() => {
             document.getElementById('display-room-code').innerText = currentRoomCode;
+            document.getElementById('room-top-bar').style.display = 'flex';
+            listenToRoom();
             showScreen('lobby-screen');
         });
     }
 
     function joinRoom() {
-        const name = document.getElementById('join-name-input').value.trim();
-        const code = document.getElementById('room-code-input').value.trim();
-        if (!name || !code) return alert('ادخل اسمك ورمز الغرفة');
+        const nameInput = document.getElementById('join-name-input').value.trim();
+        const codeInput = document.getElementById('room-code-input').value.trim();
 
-        currentPlayerName = name;
+        if (!nameInput || !codeInput) {
+            alert("الرجاء إدخال اسمك ورمز الغرفة بشكل صحيح!");
+            return;
+        }
+
+        currentRoomCode = codeInput;
+        currentPlayerName = nameInput;
         isHost = false;
-        currentRoomCode = code;
+
         roomRef = db.ref('rooms/' + currentRoomCode);
-
         roomRef.once('value', snapshot => {
-            if (!snapshot.exists()) return alert('الغرفة غير موجودة!');
+            if (!snapshot.exists()) {
+                alert("رمز الغرفة غير صحيح أو أن الغرفة غير موجودة!");
+                return;
+            }
 
-            roomRef.child('players/' + name).set(true);
-            roomRef.child('scores/' + name).transaction(curr => curr || 0);
+            const roomData = snapshot.val();
+            selectedGameMode = roomData.gameMode || 'known';
 
-            localStorage.setItem('cc_room', currentRoomCode);
-            localStorage.setItem('cc_name', name);
-            listenToRoom();
-            document.getElementById('display-room-code').innerText = currentRoomCode;
-            showScreen('lobby-screen');
+            roomRef.child('players/' + currentPlayerName).set({
+                name: currentPlayerName,
+                score: 0,
+                vote: ""
+            }).then(() => {
+                document.getElementById('display-room-code').innerText = currentRoomCode;
+                document.getElementById('room-top-bar').style.display = 'flex';
+                listenToRoom();
+                if (roomData.gameState === 'lobby') {
+                    showScreen('lobby-screen');
+                } else {
+                    syncGameState(roomData);
+                }
+            });
         });
     }
 
     function listenToRoom() {
-        if (!roomRef) return;
         roomRef.on('value', snapshot => {
+            if (!snapshot.exists()) return;
             const data = snapshot.val();
-            if (!data) return;
+            syncGameState(data);
+        });
+    }
 
-            const playerNames = Object.keys(data.players || {});
-            
-            if (!data.players[data.host]) {
-                if (playerNames.length > 0) {
-                    const newHost = playerNames[0];
-                    roomRef.update({ host: newHost });
-                    if (newHost === currentPlayerName) isHost = true;
-                }
+    function syncGameState(data) {
+        // تحديث الـ UI بناء على حالة الغرفة
+        document.getElementById('display-round-tag').innerText = `جولة ${data.currentRound || 1}`;
+
+        if (data.gameState === 'lobby') {
+            updatePlayersList(data.players);
+            if (isHost) {
+                document.getElementById('start-btn').style.display = 'block';
             } else {
-                isHost = (data.host === currentPlayerName);
+                document.getElementById('start-btn').style.display = 'none';
             }
-
-            document.getElementById('display-round-tag').innerText = `جولة ${data.currentRound || 1}`;
-
-            const playersListDiv = document.getElementById('players-list');
-            playersListDiv.innerHTML = '';
-            playerNames.forEach(p => {
-                playersListDiv.innerHTML += `
-                    <div class="player-item">
-                        <span>${p}</span>
-                        ${p === data.host ? '<span style="color:var(--accent); font-size:0.8rem;">المضيف 🌟</span>' : ''}
-                    </div>`;
-            });
-
-            document.getElementById('start-btn').style.display = isHost ? 'block' : 'none';
-            document.getElementById('voting-btn').style.display = isHost ? 'block' : 'none';
-            document.getElementById('next-btn').style.display = isHost ? 'block' : 'none';
-            document.getElementById('restart-game-btn').style.display = isHost ? 'block' : 'none';
-
-            if (data.state === 'lobby') {
-                showScreen('lobby-screen');
-            } else if (data.state === 'playing') {
-                const scenario = data.currentScenario;
-                const isFake = (currentPlayerName === data.fakePlayer);
-                
-                const alertBox = document.getElementById('role-alert-box');
-                if (isFake) {
-                    alertBox.innerHTML = `<div class="role-alert">🎭 أنت المحلل المخادع! حاول التمويه وإقناع الجميع دون كشف كلمتك!</div>`;
-                } else {
-                    alertBox.innerHTML = `<div class="role-alert normal">🎬 أنت محلل عادي! اكتشف الشخص الذي يملك كلمة مختلفة!</div>`;
-                }
-
-                const wordToShow = isFake ? scenario.fake : scenario.orig;
-                document.getElementById('scenario-text').innerHTML = scenario.text.replace("[WORD]", `<span style="color:var(--accent); font-weight:800; text-decoration: underline;">${wordToShow}</span>`);
-                showScreen('game-screen');
-            } else if (data.state === 'voting') {
-                setupVotingScreen(playerNames, data.votes || {});
-                showScreen('voting-screen');
-            } else if (data.state === 'reveal') {
-                showRevealScreen(data);
-                showScreen('reveal-screen');
-            } else if (data.state === 'championship') {
-                showChampionshipScreen(data);
-                showScreen('championship-screen');
-            }
-        });
-    }
-
-    function hostStartGame() {
-        roomRef.once('value', snapshot => {
-            const data = snapshot.val();
-            const playerNames = Object.keys(data.players || {});
-            const randomFake = playerNames[Math.floor(Math.random() * playerNames.length)];
-            
-            let used = data.usedScenarios || [];
-            let newScenario = getUniqueScenario(used);
-            used.push(newScenario.index);
-
-            roomRef.update({
-                state: 'playing',
-                currentRound: 1,
-                fakePlayer: randomFake,
-                currentScenario: newScenario,
-                usedScenarios: used,
-                votes: {}
-            });
-        });
-    }
-
-    function hostGoToVoting() {
-        roomRef.update({ state: 'voting' });
-    }
-
-    function setupVotingScreen(playerNames, votes) {
-        const optionsDiv = document.getElementById('voting-options');
-        optionsDiv.innerHTML = '';
-
-        const myVote = votes[currentPlayerName];
-
-        playerNames.forEach(p => {
-            if (p !== currentPlayerName) {
-                const isSelected = (myVote === p);
-                optionsDiv.innerHTML += `
-                    <div class="vote-card ${isSelected ? 'selected' : ''}" onclick="playClickSound(); toggleVote('${p}')">
-                        <span>صوّت ضد: <b>${p}</b></span>
-                        <span>${isSelected ? '✅ تم اختيارك (اضغط للإلغاء)' : '👈'}</span>
-                    </div>`;
-            }
-        });
-
-        const totalVotes = Object.keys(votes).length;
-        const totalPlayers = playerNames.length;
-        document.getElementById('vote-status').innerText = `عدد المصوتين حتى الآن: (${totalVotes} من ${totalPlayers})`;
-
-        const revealBtn = document.getElementById('host-reveal-btn');
-        if (isHost && totalVotes >= totalPlayers && totalPlayers > 0) {
-            revealBtn.style.display = 'block';
-        } else {
-            revealBtn.style.display = 'none';
+            showScreen('lobby-screen');
+        } 
+        else if (data.gameState === 'game') {
+            setupGameScreen(data);
+            showScreen('game-screen');
+        } 
+        else if (data.gameState === 'voting') {
+            setupVotingScreen(data);
+            showScreen('voting-screen');
+        }
+        else if (data.gameState === 'reveal') {
+            setupRevealScreen(data);
+            showScreen('reveal-screen');
+        }
+        else if (data.gameState === 'leaderboard') {
+            setupLeaderboardScreen(data);
+            showScreen('leaderboard-screen');
+        }
+        else if (data.gameState === 'championship') {
+            setupChampionshipScreen(data);
+            showScreen('championship-screen');
         }
     }
 
-    function toggleVote(votedPlayer) {
-        const voteRef = roomRef.child('votes/' + currentPlayerName);
-        voteRef.once('value', snapshot => {
-            if (snapshot.val() === votedPlayer) {
-                voteRef.remove();
-            } else {
-                voteRef.set(votedPlayer);
+    function updatePlayersList(players) {
+        const listDiv = document.getElementById('players-list');
+        listDiv.innerHTML = '';
+        if (!players) return;
+        Object.values(players).forEach(p => {
+            listDiv.innerHTML += `<div class="player-item"><span>👤 ${p.name}</span> <span style="color:var(--accent);">متصل</span></div>`;
+        });
+    }
+
+    // بدء اللعبة من الهوست
+    function hostStartGame() {
+        if (!isHost) return;
+        roomRef.once('value', snapshot => {
+            const data = snapshot.val();
+            const playersKeys = Object.keys(data.players);
+            if (playersKeys.length < 2) {
+                alert("يجب أن يتواجد لاعبين على الأقل لبدء البطولة!");
+                return;
             }
+
+            // اختيار مخادع عشوائي
+            const impostorKey = playersKeys[Math.floor(Math.random() * playersKeys.length)];
+            
+            // اختيار سيناريو فريد
+            let usedArr = Object.values(data.usedScenarios || {});
+            let chosenScene = getUniqueScenario(usedArr);
+
+            roomRef.child('roundData').set({
+                impostor: impostorKey,
+                scenarioIndex: chosenScene.index,
+                text: chosenScene.text,
+                orig: chosenScene.orig,
+                fake: chosenScene.fake
+            });
+
+            roomRef.update({ gameState: 'game' });
+        });
+    }
+
+    function setupGameScreen(data) {
+        const roundData = data.roundData;
+        const alertBox = document.getElementById('role-alert-box');
+        const scenarioDiv = document.getElementById('scenario-text');
+
+        let isImpostor = (roundData.impostor === currentPlayerName);
+        let actualWord = isImpostor ? roundData.fake : roundData.orig;
+        let formattedText = roundData.text.replace('[WORD]', `<span style="color:var(--accent); text-decoration: underline;">${actualWord}</span>`);
+
+        scenarioDiv.innerHTML = formattedText;
+
+        if (data.gameMode === 'known') {
+            if (isImpostor) {
+                alertBox.className = "role-alert";
+                alertBox.innerHTML = `⚠️ تنبيه خاص: أنت هو **المخادع** في هذه الجولة! الكلمة البديلة الخاصة بك هي: (${roundData.fake})`;
+            } else {
+                alertBox.className = "role-alert normal";
+                alertBox.innerHTML = `✅ أنت لاعب طبيعي. الكلمة الصحيحة في المشهد هي: (${roundData.orig})`;
+            }
+        } else {
+            // النمط الثاني: المخادع لا يعرف
+            alertBox.className = "role-alert normal";
+            alertBox.innerHTML = `🎬 استمتع بالمشهد وحلل التفاصيل بدقة!`;
+        }
+
+        if (isHost) {
+            document.getElementById('voting-btn').style.display = 'block';
+        } else {
+            document.getElementById('voting-btn').style.display = 'none';
+        }
+    }
+
+    function hostGoToVoting() {
+        if (!isHost) return;
+        roomRef.update({ gameState: 'voting' });
+    }
+
+    function setupVotingScreen(data) {
+        const optionsDiv = document.getElementById('voting-options');
+        optionsDiv.innerHTML = '';
+        
+        const players = data.players || {};
+        Object.keys(players).forEach(pName => {
+            if (pName !== currentPlayerName) {
+                optionsDiv.innerHTML += `
+                    <div class="vote-card" onclick="castVote('${pName}')">
+                        <span>👤 ${pName}</span>
+                        <span style="font-size: 0.85rem; color:var(--text-sub);">اضغط للتصويت ضدّه</span>
+                    </div>
+                `;
+            }
+        });
+
+        // ضبط عداد الدقيقة لتنفيذ التصويت تلقائياً إذا انتهى الوقت
+        if (votingTimerInterval) clearInterval(votingTimerInterval);
+        let timeLeft = 60;
+        document.getElementById('timer-countdown').innerText = timeLeft;
+
+        votingTimerInterval = setInterval(() => {
+            timeLeft--;
+            const timerSpan = document.getElementById('timer-countdown');
+            if (timerSpan) timerSpan.innerText = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(votingTimerInterval);
+                if (isHost) {
+                    hostCalculateResults();
+                }
+            }
+        }, 1000);
+
+        if (isHost) {
+            document.getElementById('host-reveal-btn').style.display = 'block';
+        } else {
+            document.getElementById('host-reveal-btn').style.display = 'none';
+        }
+    }
+
+    function castVote(targetName) {
+        if (votingTimerInterval) clearInterval(votingTimerInterval);
+        roomRef.child(`players/${currentPlayerName}/vote`).set(targetName).then(() => {
+            document.getElementById('vote-status').innerText = `تم تسجيل صوتك ضد (${targetName}) بنجاح! انتظر ظهور النتائج...`;
         });
     }
 
     function hostCalculateResults() {
+        if (!isHost) return;
+        if (votingTimerInterval) clearInterval(votingTimerInterval);
+
         roomRef.once('value', snapshot => {
             const data = snapshot.val();
-            const votes = data.votes || {};
-            const playerNames = Object.keys(data.players || {});
-            const fakePlayer = data.fakePlayer;
-            let scores = data.scores || {};
+            const players = data.players;
+            const roundData = data.roundData;
+            const impostor = roundData.impostor;
 
-            playerNames.forEach(p => { if (!scores[p]) scores[p] = 0; });
+            // حساب النقاط البسيطة
+            let updates = {};
+            let voteCounts = {};
 
-            let caughtByAll = true;
-
-            playerNames.forEach(p => {
-                if (p !== fakePlayer) {
-                    if (votes[p] === fakePlayer) {
-                        scores[p] += 1;
-                    } else {
-                        caughtByAll = false;
-                    }
+            Object.values(players).forEach(p => {
+                if (p.vote && p.vote === impostor) {
+                    // من صوت للمخادع يكسب نقاط
+                    updates[`players/${p.name}/score`] = (p.score || 0) + 10;
                 }
             });
 
-            if (!caughtByAll) {
-                scores[fakePlayer] += 1;
-            }
-
-            roomRef.update({
-                scores: scores,
-                state: 'reveal'
+            roomRef.update(updates).then(() => {
+                roomRef.update({ gameState: 'reveal' });
             });
         });
     }
 
-    function showRevealScreen(data) {
-        const scenario = data.currentScenario;
-        const votes = data.votes || {};
-        const myVote = votes[currentPlayerName];
-        const fakePlayer = data.fakePlayer;
-        const isFake = (currentPlayerName === fakePlayer);
-
-        let isCorrect = false;
-        if (isFake) {
-            const playerNames = Object.keys(data.players || {});
-            const caughtCount = Object.values(votes).filter(v => v === fakePlayer).length;
-            isCorrect = (caughtCount < playerNames.length - 1);
-        } else {
-            isCorrect = (myVote === fakePlayer);
-        }
-
-        playResultSound(isCorrect);
-
-        let lightClass = isCorrect ? 'green-light' : 'red-light';
-        let animHTML = `
-            <div class="result-anim-wrapper">
-                <div class="spotlight-beam ${lightClass}"></div>
-                <div class="result-anim-card ${isCorrect ? 'correct' : 'wrong'}">
-                    ${isCorrect ? '🎉 إجابة صحيحة! (+1 نقطة)' : '❌ إجابة خاطئة! (0 نقطة)'}
-                </div>
+    function setupRevealScreen(data) {
+        const roundData = data.roundData;
+        const contentDiv = document.getElementById('reveal-content');
+        contentDiv.innerHTML = `
+            <div class="winner-box">
+                <div style="font-size: 1.2rem; margin-bottom: 8px;">🎭 المحلل المخادع كان:</div>
+                <div style="font-size: 1.8rem; font-weight: 900; color: var(--accent);">(${roundData.impostor})</div>
+                <div style="margin-top: 12px; font-size: 0.95rem; color: var(--text-main);">الكلمة الأصلية: <b>${roundData.orig}</b></div>
+                <div style="margin-top: 4px; font-size: 0.95rem; color: var(--text-sub);">كلمة المخادع: <b>${roundData.fake}</b></div>
             </div>
         `;
-
-        document.getElementById('reveal-content').innerHTML = `
-            ${animHTML}
-            <p style="text-align: center; color: var(--text-sub); margin-bottom: 18px; margin-top: 15px;">
-                المحلل المخادع في هذه الجولة كان: <b style="color:var(--danger); font-size:1.2rem;">${data.fakePlayer}</b>
-            </p>
-            <div style="background: rgba(7, 9, 14, 0.85); border-radius: 16px; padding: 18px; border: 1px solid var(--panel-border); text-align: right; line-height: 1.8;">
-                <div>• الكلمة عند المحللين العاديين: <b style="color:var(--accent);">${scenario.orig}</b></div>
-                <div style="margin-top:8px;">• الكلمة المخادعة عند ${data.fakePlayer}: <b style="color:var(--danger);">${scenario.fake}</b></div>
-            </div>
-        `;
-
-        updateLeaderboardList('leaderboard-list', data.scores || {});
     }
 
-    function updateLeaderboardList(elementId, scores) {
-        const leaderboardDiv = document.getElementById(elementId);
-        leaderboardDiv.innerHTML = '';
-        
-        const sortedPlayers = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+    function setupLeaderboardScreen(data) {
+        const listDiv = document.getElementById('leaderboard-list');
+        listDiv.innerHTML = '';
+        let sortedPlayers = Object.values(data.players || {}).sort((a, b) => (b.score || 0) - (a.score || 0));
 
-        sortedPlayers.forEach((p, idx) => {
-            let medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '👤'));
-            leaderboardDiv.innerHTML += `
+        sortedPlayers.forEach((p, index) => {
+            listDiv.innerHTML += `
                 <div class="leaderboard-item">
-                    <span>${medal} ${idx + 1}. <b>${p}</b> ${p === currentPlayerName ? '(أنت)' : ''}</span>
-                    <span style="color:var(--accent); font-weight:800;">${scores[p]} نقطة</span>
+                    <span>#${index + 1} - ${p.name}</span>
+                    <span style="color:var(--accent); font-weight:800;">${p.score || 0} نقطة</span>
                 </div>
             `;
         });
+
+        if (isHost) {
+            document.getElementById('next-btn').style.display = 'block';
+        } else {
+            document.getElementById('next-btn').style.display = 'none';
+        }
     }
 
     function hostNextRound() {
+        if (!isHost) return;
         roomRef.once('value', snapshot => {
             const data = snapshot.val();
-            let currentRound = data.currentRound || 1;
+            let nextRound = (data.currentRound || 1) + 1;
 
-            if (currentRound >= 5) {
-                roomRef.update({ state: 'championship' });
-            } else {
-                const playerNames = Object.keys(data.players || {});
-                const randomFake = playerNames[Math.floor(Math.random() * playerNames.length)];
-                
-                let used = data.usedScenarios || [];
-                let newScenario = getUniqueScenario(used);
-                used.push(newScenario.index);
-
-                roomRef.update({
-                    state: 'playing',
-                    currentRound: currentRound + 1,
-                    fakePlayer: randomFake,
-                    currentScenario: newScenario,
-                    usedScenarios: used,
-                    votes: {}
-                });
+            if (nextRound > 5) {
+                roomRef.update({ gameState: 'championship' });
+                return;
             }
-        });
-    }
 
-    function showChampionshipScreen(data) {
-        const scores = data.scores || {};
-        const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
-        const winner = sorted[0] || 'لا يوجد';
+            const playersKeys = Object.keys(data.players);
+            const impostorKey = playersKeys[Math.floor(Math.random() * playersKeys.length)];
+            
+            let usedMap = data.usedScenarios || {};
+            let usedArr = Object.values(usedMap);
+            let chosenScene = getUniqueScenario(usedArr);
+            usedMap[chosenScene.index] = chosenScene.index;
 
-        document.getElementById('winner-display').innerHTML = `
-            <div style="font-size:3.5rem; margin-bottom:10px;">🏆</div>
-            <div style="font-size:1.1rem; color:var(--text-sub);">بطل البطولة والأكثر ذكاءً:</div>
-            <div style="font-size:2rem; font-weight:900; color:var(--accent); margin-top:5px;">${winner}</div>
-            <div style="font-size:1.2rem; color:var(--success); font-weight:800; margin-top:5px;">بـ ${scores[winner]} نقطة!</div>
-        `;
+            // مسح أصوات الجولة السابقة
+            let resetVotes = {};
+            playersKeys.forEach(p => {
+                resetVotes[`players/${p}/vote`] = "";
+            });
+            roomRef.update(resetVotes);
 
-        updateLeaderboardList('final-leaderboard-list', scores);
-    }
-
-    function hostRestartTournament() {
-        roomRef.once('value', snapshot => {
-            const data = snapshot.val();
-            const playerNames = Object.keys(data.players || {});
-            let resetScores = {};
-            playerNames.forEach(p => resetScores[p] = 0);
-
-            const randomFake = playerNames[Math.floor(Math.random() * playerNames.length)];
-            let newScenario = getUniqueScenario([]);
+            roomRef.child('roundData').set({
+                impostor: impostorKey,
+                scenarioIndex: chosenScene.index,
+                text: chosenScene.text,
+                orig: chosenScene.orig,
+                fake: chosenScene.fake
+            });
 
             roomRef.update({
-                state: 'playing',
-                currentRound: 1,
-                scores: resetScores,
-                fakePlayer: randomFake,
-                currentScenario: newScenario,
-                usedScenarios: [newScenario.index],
-                votes: {}
+                currentRound: nextRound,
+                usedScenarios: usedMap,
+                gameState: 'game'
             });
         });
     }
 
-    const canvas = document.getElementById('cinema-canvas');
-    const ctx = canvas.getContext('2d');
-    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    function setupChampionshipScreen(data) {
+        let sortedPlayers = Object.values(data.players || {}).sort((a, b) => (b.score || 0) - (a.score || 0));
+        let winner = sortedPlayers[0] || { name: 'لا يوجد', score: 0 };
 
-    const iconList = ['🎬', '🎭', '💥', '👻', '🍿', '📜', '🎥', '🔪', '🕵️‍♂️'];
-    let floatingIcons = [];
-    for (let i = 0; i < 20; i++) {
-        floatingIcons.push({
-            icon: iconList[Math.floor(Math.random() * iconList.length)],
-            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-            size: Math.random() * 22 + 18, speedY: Math.random() * 0.6 + 0.2,
-            speedX: (Math.random() - 0.5) * 0.4, alpha: Math.random() * 0.35 + 0.1
+        document.getElementById('winner-display').innerHTML = `
+            <div style="font-size: 1.4rem; font-weight: 800; margin-bottom: 5px;">👑 بطل الاستوديو 👑</div>
+            <div style="font-size: 2rem; font-weight: 900; color: #fff;">${winner.name}</div>
+            <div style="margin-top: 8px; color: var(--accent); font-weight: 700;">برصيد ${winner.score} نقطة!</div>
+        `;
+
+        const finalDiv = document.getElementById('final-leaderboard-list');
+        finalDiv.innerHTML = '';
+        sortedPlayers.forEach((p, index) => {
+            finalDiv.innerHTML += `
+                <div class="leaderboard-item">
+                    <span>#${index + 1} - ${p.name}</span>
+                    <span style="color:var(--accent); font-weight:800;">${p.score || 0} نقطة</span>
+                </div>
+            `;
         });
+
+        if (isHost) {
+            document.getElementById('restart-game-btn').style.display = 'block';
+        } else {
+            document.getElementById('restart-game-btn').style.display = 'none';
+        }
     }
 
-    function renderCinemaBackground() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        floatingIcons.forEach(p => {
-            p.y -= p.speedY; p.x += p.speedX;
-            if (p.y < -50) { p.y = canvas.height + 50; p.x = Math.random() * canvas.width; }
-            ctx.save();
-            ctx.globalAlpha = p.alpha; ctx.font = `${p.size}px Arial`;
-            ctx.fillText(p.icon, p.x, p.y); ctx.restore();
+    function hostRestartTournament() {
+        if (!isHost) return;
+        roomRef.update({
+            currentRound: 1,
+            gameState: 'lobby',
+            usedScenarios: { 0: 0 }
         });
-        requestAnimationFrame(renderCinemaBackground);
     }
-    renderCinemaBackground();
 </script>
 </body>
 </html>
